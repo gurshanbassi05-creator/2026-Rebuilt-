@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Commands.Drivecommand;
+import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.DriveForward;
 import frc.robot.Commands.Autos.FULLHANGAUTO;
 import frc.robot.Subsytems.Driveterrain;
+import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Intake;
 import frc.robot.Subsytems.Linearaccuator;
 
@@ -24,28 +26,30 @@ public class RobotContainer {
   final XboxController Controller = new XboxController(0);
   final Linearaccuator Linearsub = new Linearaccuator();
   final Intake Intakesub = new Intake();
+  final Flywheel Flywheelsub = new Flywheel();
   //Sendable chooser can let autos be chosen from the smart dashboard
-      SendableChooser<Command> chooser = new SendableChooser<>();
+  SendableChooser<Command> chooser = new SendableChooser<>();
       
   public RobotContainer() {
     //Setting the subsytems to the commands (linking them)
     Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
     Linearsub.setDefaultCommand(new Linearcommand(Linearsub, Controller));
     Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
+    Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
     //Allowing smartdashboard to contain choices mainly for Auto routines
     SmartDashboard.putData(chooser);
     //Giving the chooser options and getting those actions from the autocommands
     //test
-    chooser.addOption("Driveforward", new DriveForward(Drivesub, 1));
+    chooser.addOption("Driveforward", new DriveForward(Drivesub));
     //realauto
     chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub));
-    
-    configureBindings(); }
+  
+    configureBindings();
+   }
 
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    
     return chooser.getSelected();
   }
 }

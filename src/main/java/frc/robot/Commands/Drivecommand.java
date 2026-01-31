@@ -28,8 +28,8 @@ public class Drivecommand extends Command {
   @Override
   public void execute() {
     //Setting variables related to the controllers joysticks
-    double RightX = 0.9*Controller.getRightX();
-    double LeftY = 0.9*Controller.getLeftY();
+    double RightX = Controller.getRightX();
+    double LeftY = Controller.getLeftY();
     //Setting up a controller deadzone by saying if the value of the joysticks is bellow a certain threshold set the varible to 0
     if (Math.abs(LeftY)< 0.05) {
       LeftY = 0;
@@ -37,6 +37,7 @@ public class Drivecommand extends Command {
     if (Math.abs(RightX)< 0.05) {
       RightX = 0;
     }
+   
   //Calling the drive method and relating it to the variables
     Drivesub.Drive(LeftY, RightX);
   }
