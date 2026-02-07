@@ -24,13 +24,13 @@ public class Linearcommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Deployed = true;
+    Deployed = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (controller.getLeftBumperButton()) {
+    if (controller.getLeftBumperButtonPressed()) {
       Linearsub.IN_OUT(1);
     }
     if (controller.getLeftBumperButtonReleased()) {
@@ -43,6 +43,7 @@ public class Linearcommand extends Command {
     if (controller.getRightBumperButtonReleased()) {
       Linearsub.stop();
     } 
+   
    
 
     }

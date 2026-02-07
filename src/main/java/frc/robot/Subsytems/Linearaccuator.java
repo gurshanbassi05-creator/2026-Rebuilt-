@@ -23,6 +23,7 @@ Climb.set(TalonSRXControlMode.PercentOutput, speed);
   }
    
   public void stop(){    
+Climb.set(TalonSRXControlMode.PercentOutput, 0);
 
   }
 

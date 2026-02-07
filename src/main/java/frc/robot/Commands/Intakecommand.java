@@ -51,7 +51,7 @@ public class Intakecommand extends Command {
      Intakeon = !Intakeon;
      //If intakeon is true then set the speed to 1
     if (Intakeon) {
-      Intakesub.Intakespeed(-1); 
+      Intakesub.Intakespeed(-0.75); 
      }
      //else set the speed to 0 when the boolean is false (when the button is pused again)
     else{
@@ -61,10 +61,10 @@ public class Intakecommand extends Command {
      if (controller.getBButtonPressed()) {
       Intakedeploy = !Intakedeploy;
       if (Intakedeploy) {
-        Intakesub.Limitedintakespeed(0.25);
+        Intakesub.Limitedintakespeed(1);
       }
       if (Intakedeploy == false) {
-        Intakesub.Limitedintakespeed(-0.25);
+        Intakesub.Limitedintakespeed(-1);
       }
     
      }

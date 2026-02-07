@@ -14,6 +14,7 @@ import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.DriveForward;
 import frc.robot.Commands.Autos.FULLHANGAUTO;
+import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Intake;
@@ -29,6 +30,9 @@ public class RobotContainer {
   final Flywheel Flywheelsub = new Flywheel();
   //Sendable chooser can let autos be chosen from the smart dashboard
   SendableChooser<Command> chooser = new SendableChooser<>();
+
+  final Camera Camsub = new Camera();
+  
       
   public RobotContainer() {
     //Setting the subsytems to the commands (linking them)
@@ -43,7 +47,7 @@ public class RobotContainer {
     chooser.addOption("Driveforward", new DriveForward(Drivesub));
     //realauto
     chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub));
-  
+    
     configureBindings();
    }
 

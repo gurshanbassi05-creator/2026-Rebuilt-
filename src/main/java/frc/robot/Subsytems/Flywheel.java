@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Flywheel extends SubsystemBase {
   TalonSRX Kick, Flywheel;
+ 
   /** Creates a new Flywheel. */
   public Flywheel() {
   Kick = new TalonSRX(9);
   Flywheel = new TalonSRX(10);
+
   }
   public void Speed(double speed){
     Flywheel.set(TalonSRXControlMode.PercentOutput, speed);

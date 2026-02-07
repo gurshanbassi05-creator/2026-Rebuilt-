@@ -30,10 +30,10 @@ addRequirements(Drivesub);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() <= 1) {
+    if (timer.get() <= 4) {
       Drivesub.Drive(0.25, 0);
     }
-   if (timer.get() >= 1) {
+   if (timer.get() >= 4) {
     Drivesub.Stop();
    }
   }
@@ -45,6 +45,6 @@ addRequirements(Drivesub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= 1;
+    return timer.get() >= 4;
   }
 }
