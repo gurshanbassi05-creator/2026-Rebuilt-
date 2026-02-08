@@ -6,38 +6,36 @@ package frc.robot.Commands.Autos;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsytems.Linearaccuator;
+import frc.robot.Subsytems.Flywheel;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Lineardown extends Command {
-  Linearaccuator Linearsub;
+public class Flywheelshoot extends Command {
+  Flywheel Shootersub;
   double seconds;
   Timer timer;
-  public Lineardown( Linearaccuator Linearsub, double seconds) {
-    this.Linearsub = Linearsub;
+  /** Creates a new Flywheelshoot. */
+  public Flywheelshoot(Flywheel Shootersub, double seconds) {
+    this.Shootersub = Shootersub;
     this.seconds = seconds;
     timer = new Timer();
+    addRequirements(Shootersub);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(Linearsub);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   timer.reset();
-   timer.start();
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(timer.get() <= seconds){
-Linearsub.IN_OUT(-1);
+      Shootersub.Speed(1);
+    }
   }
-  else{
-    Linearsub.stop();
-  }
-}
 
   // Called once the command ends or is interrupted.
   @Override

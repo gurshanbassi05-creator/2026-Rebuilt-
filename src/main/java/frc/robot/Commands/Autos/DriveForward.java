@@ -11,10 +11,12 @@ import frc.robot.Subsytems.Driveterrain;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveForward extends Command {
   Driveterrain Drivesub;
+  double Seconds;
   Timer timer;
 
-  public DriveForward(Driveterrain Drivesub) {
+  public DriveForward(Driveterrain Drivesub, double seconds) {
 this.Drivesub = Drivesub;
+this.Seconds = seconds;
 timer = new Timer();
 addRequirements(Drivesub);
 
@@ -30,10 +32,10 @@ addRequirements(Drivesub);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() <= 4) {
+    if (timer.get() <= Seconds) {
       Drivesub.Drive(0.25, 0);
     }
-   if (timer.get() >= 4) {
+   if (timer.get() >= Seconds) {
     Drivesub.Stop();
    }
   }
@@ -45,6 +47,6 @@ addRequirements(Drivesub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= 4;
+    return timer.hasElapsed(Seconds);
   }
 }

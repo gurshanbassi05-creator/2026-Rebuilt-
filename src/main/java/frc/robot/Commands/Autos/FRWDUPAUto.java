@@ -18,10 +18,10 @@ public class FRWDUPAUto extends ParallelCommandGroup {
   public FRWDUPAUto(Driveterrain Drivesub, Linearaccuator Linearsub) {
     this.Drivesub = Drivesub;
     this.Linearsub = Linearsub;
-    
+    addRequirements(Drivesub, Linearsub);
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-     new DriveForward(Drivesub), new LinearslideUP(Linearsub)
+     new DriveForward(Drivesub, 4), new LinearslideUP(Linearsub, 4)
     );
   }
 }

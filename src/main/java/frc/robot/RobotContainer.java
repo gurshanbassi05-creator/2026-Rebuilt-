@@ -44,7 +44,7 @@ public class RobotContainer {
     SmartDashboard.putData(chooser);
     //Giving the chooser options and getting those actions from the autocommands
     //test
-    chooser.addOption("Driveforward", new DriveForward(Drivesub));
+    chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
     //realauto
     chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub));
     

@@ -12,9 +12,11 @@ import frc.robot.Subsytems.Linearaccuator;
 public class LinearslideUP extends Command {
   Linearaccuator Linearsub;
   Timer timer;
-  public LinearslideUP(Linearaccuator Linearsub) {
+  double seconds;
+  public LinearslideUP(Linearaccuator Linearsub, double seconds) {
     timer = new Timer();
-this.Linearsub = Linearsub;
+    this.seconds = seconds;
+  this.Linearsub = Linearsub;
 addRequirements(Linearsub);
   }
 
@@ -28,7 +30,7 @@ addRequirements(Linearsub);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() < 4) {
+    if (timer.get() <= seconds) {
       Linearsub.IN_OUT(1);
     }
     else{
@@ -43,6 +45,6 @@ addRequirements(Linearsub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished(){
-    return timer.get() >= 4;
+    return timer.hasElapsed(seconds);
   }
 }
