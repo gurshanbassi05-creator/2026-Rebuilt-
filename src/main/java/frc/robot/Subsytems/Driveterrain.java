@@ -43,8 +43,6 @@ public class Driveterrain extends SubsystemBase {
     public void resetHeading(){
     gyro.reset();
   }
-
-
   //Grouping Leftmotors
   public void Leftmotors(double speed){
     Frontleft.set(speed);
