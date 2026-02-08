@@ -24,7 +24,7 @@ public class FULLHANGAUTO extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new Flywheelshoot(Shootersub, 1),
+      new Flywheelshoot(Shootersub, 3),
       new FRWDUPAUto(Drivesub, Linearsub), 
       new Lineardown(Linearsub, 4)
     );
