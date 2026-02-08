@@ -17,7 +17,7 @@ public class Intakecommand extends Command {
   //makes 2 booleans to toggle buttons 
   boolean Intakeon, Intakedeploy;
   //Creating a double to link it to the encoder
-  double X;
+  //double X;
  //Links the subsytem and controller to the command
   public Intakecommand(Intake Intakesub, XboxController controller) {
     //allows it to be used in the execure methods
@@ -34,15 +34,15 @@ public class Intakecommand extends Command {
     Intakeon = false;
     Intakedeploy = false;
     //Reseting encoder so it starts at 0 aka folded postion for the intake 
-    Intakesub.resetencoder();
-    Intakesub.Setpoisiton(0);
+    //Intakesub.resetencoder();
+   // Intakesub.Setpoisiton(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled. At 0.2 seconds per tick
   @Override
   public void execute() {
     //Setting X equal to the current encoder position
-    X = Intakesub.Getencoderposition();
+    //X = Intakesub.Getencoderposition();
     
     //The idea is to have the intake work on 1 toggable button press. 
     //Press A once to turn it on, Then press A again to turn it off
@@ -61,10 +61,10 @@ public class Intakecommand extends Command {
      if (controller.getBButtonPressed()) {
       Intakedeploy = !Intakedeploy;
       if (Intakedeploy) {
-        Intakesub.Limitedintakespeed(1);
+        Intakesub.Limitedintakespeed(0.25);
       }
       if (Intakedeploy == false) {
-        Intakesub.Limitedintakespeed(-1);
+        Intakesub.Limitedintakespeed(-0.25);
       }
     
      }

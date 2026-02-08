@@ -27,22 +27,22 @@ public class Intake extends SubsystemBase{
   public Intake() { 
     Intake = new SparkMax(8, MotorType.kBrushed);
     //Defining neo
-    Intakedeploy = new SparkMax(6, MotorType.kBrushless);
+    //Intakedeploy = new SparkMax(6, MotorType.kBrushless);
     Limitintake = new TalonSRX(12);
     //Using the dio ports on the RIO to initalize the digital input
     LimitswitchBottom = new DigitalInput(0);
     LimitswitchTop = new DigitalInput(1);
     //Creates an encoder and sets it to the neo encoder
-    encoder = Intakedeploy.getEncoder();
+    //encoder = Intakedeploy.getEncoder();
     //PID controller allows precise movement and this sets it equal to the motors controller
-    pidController = Intakedeploy.getClosedLoopController();
+    //pidController = Intakedeploy.getClosedLoopController();
     //Configs configure motor settings
-    config = new SparkMaxConfig();
+    //config = new SparkMaxConfig();
     //setting a p value which is like strength and allows the motor to spin
-    config.closedLoop.p(0.095);
+    //config.closedLoop.p(0.095);
     //Xonfiguring the motor for saftey and linking it to the config
-    Intakedeploy.configure(config, com.revrobotics.ResetMode.kResetSafeParameters , 
-     com.revrobotics.PersistMode.kPersistParameters);
+   // Intakedeploy.configure(config, com.revrobotics.ResetMode.kResetSafeParameters , 
+     //com.revrobotics.PersistMode.kPersistParameters);
   }
   //Limit switch methods
     public boolean Topswitchhit(){
@@ -59,17 +59,17 @@ public class Intake extends SubsystemBase{
     }
     //Encoder methods
   //Creates method to get the current postion of the encoder
-  public double Getencoderposition(){
-  return encoder.getPosition();
-  }
+ // public double Getencoderposition(){
+  //return encoder.getPosition();
+  //}
   //Uses the PID controller to let the encoder value influence the position of the motor in number of roations
-  public void Setpoisiton(double Rotaitons){
-  pidController.setSetpoint(Rotaitons, SparkMax.ControlType.kPosition);
-  }
+ // public void Setpoisiton(double Rotaitons){
+ // pidController.setSetpoint(Rotaitons, SparkMax.ControlType.kPosition);
+ // }
   //Method to set the encoder position to 0
-  public void resetencoder(){
-  encoder.setPosition(0);
-  }
+  //public void resetencoder(){
+  //encoder.setPosition(0);
+  //}
   //Method assiging the intake rollers a variable that can is their speed
   public void Intakespeed(double speed){
   Intake.set(speed);

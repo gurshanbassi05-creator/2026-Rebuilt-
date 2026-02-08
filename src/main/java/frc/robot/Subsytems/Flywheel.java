@@ -6,27 +6,29 @@ package frc.robot.Subsytems;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Flywheel extends SubsystemBase {
-  TalonSRX Kick, Flywheel;
- 
+  TalonSRX Flywheel;
+ SparkMax Kick;
   /** Creates a new Flywheel. */
   public Flywheel() {
-  Kick = new TalonSRX(9);
+  Kick = new SparkMax(6, MotorType.kBrushless);
   Flywheel = new TalonSRX(10);
 
   }
   public void Speed(double speed){
     Flywheel.set(TalonSRXControlMode.PercentOutput, speed);
-    Kick.set(TalonSRXControlMode.PercentOutput, speed);
+    Kick.set(speed);
     
   }
   
   public void Stop(){
     Flywheel.set(TalonSRXControlMode.PercentOutput, 0);
-    Kick.set(TalonSRXControlMode.PercentOutput, 0);
+    Kick.stopMotor();
   }
   @Override
   public void periodic() {
