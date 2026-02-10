@@ -25,7 +25,7 @@ public class FULLHANGAUTO extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new Flywheelshoot(Shootersub, 3),
-      new FRWDUPAUto(Drivesub, Linearsub), 
+      new DriveForward(Drivesub, 2),
       new Lineardown(Linearsub, 4)
     );
   }

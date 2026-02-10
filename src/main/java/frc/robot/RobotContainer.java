@@ -47,7 +47,7 @@ public class RobotContainer {
     //test
     chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
     //realauto
-    chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));;;
+    chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
     
     configureBindings();
    }

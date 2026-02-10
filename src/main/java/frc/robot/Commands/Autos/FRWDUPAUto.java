@@ -21,7 +21,8 @@ public class FRWDUPAUto extends ParallelCommandGroup {
     addRequirements(Drivesub, Linearsub);
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-     new DriveForward(Drivesub, 4), new LinearslideUP(Linearsub, 4)
+     new DriveForward(Drivesub, 4), 
+     new LinearslideUP(Linearsub, 4)
     );
   }
 }

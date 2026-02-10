@@ -14,9 +14,9 @@ public class DriveForward extends Command {
   double Seconds;
   Timer timer;
 
-  public DriveForward(Driveterrain Drivesub, double seconds) {
+  public DriveForward(Driveterrain Drivesub, double Seconds) {
 this.Drivesub = Drivesub;
-this.Seconds = seconds;
+this.Seconds = Seconds;
 timer = new Timer();
 addRequirements(Drivesub);
 
@@ -32,7 +32,7 @@ addRequirements(Drivesub);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() <= Seconds) {
+    if (timer.get() < Seconds) {
       Drivesub.Drive(0.25, 0);
     }
    if (timer.get() >= Seconds) {
@@ -47,6 +47,6 @@ addRequirements(Drivesub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(Seconds);
+    return timer.get() >= Seconds;
   }
 }
