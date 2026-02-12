@@ -31,7 +31,7 @@ public class Lineardown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(timer.get() <= seconds){
+    if(timer.get() < seconds){
 Linearsub.IN_OUT(-1);
   }
   else{
@@ -46,6 +46,6 @@ Linearsub.IN_OUT(-1);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(seconds);
+    return timer.get() > seconds;
   }
 }

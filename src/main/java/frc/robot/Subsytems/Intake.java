@@ -16,12 +16,12 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class Intake extends SubsystemBase{
-  SparkMax Intake, Intakedeploy;
+  SparkMax Intake;
   TalonSRX Limitintake;
-  DigitalInput LimitswitchTop, LimitswitchBottom;
   RelativeEncoder encoder;
   SparkClosedLoopController pidController;
   SparkMaxConfig config;
+   DigitalInput Toplimitswitch, BottomLimitswitch;
  
   /** Creates a new Intake. */
   public Intake() { 
@@ -30,8 +30,10 @@ public class Intake extends SubsystemBase{
     //Intakedeploy = new SparkMax(6, MotorType.kBrushless);
     Limitintake = new TalonSRX(12);
     //Using the dio ports on the RIO to initalize the digital input
-    LimitswitchBottom = new DigitalInput(0);
-    LimitswitchTop = new DigitalInput(1);
+    Toplimitswitch = new DigitalInput(0);
+    BottomLimitswitch = new DigitalInput(1);          
+
+
     //Creates an encoder and sets it to the neo encoder
     //encoder = Intakedeploy.getEncoder();
     //PID controller allows precise movement and this sets it equal to the motors controller
@@ -44,19 +46,22 @@ public class Intake extends SubsystemBase{
    // Intakedeploy.configure(config, com.revrobotics.ResetMode.kResetSafeParameters , 
      //com.revrobotics.PersistMode.kPersistParameters);
   }
+
   //Limit switch methods
-    public boolean Topswitchhit(){
-      return LimitswitchTop.get();
+    public boolean Tophit(){
+      return Toplimitswitch.get();
     }
-    public boolean BottomLimitswitchhit(){
-      return LimitswitchBottom.get();
-    }
+   public boolean Bottomhit(){
+    return BottomLimitswitch.get();
+   }
+  
     public void Limitedintakespeed(double speed){
       Limitintake.set(TalonSRXControlMode.PercentOutput,speed);
     }
     public void Limitedintakestop(){
       Limitintake.set(TalonSRXControlMode.PercentOutput, 0);
     }
+    
     //Encoder methods
   //Creates method to get the current postion of the encoder
  // public double Getencoderposition(){
@@ -75,14 +80,6 @@ public class Intake extends SubsystemBase{
   Intake.set(speed);
   }
   //DOing the same for the neo motor
-  public void Intakedeployspeed(double speed){
-  Intakedeploy.set(speed);
-  }
-  //Methods to stop motors 
-  public void deploystop(){
-  Intakedeploy.stopMotor();
-  }
-
   public void Stop(){
   Intake.stopMotor();
   }

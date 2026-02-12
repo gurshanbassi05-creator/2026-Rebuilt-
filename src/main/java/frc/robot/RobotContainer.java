@@ -4,10 +4,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
@@ -25,35 +27,61 @@ public class RobotContainer {
   //Addind the subsystems and controller to the container
   final Driveterrain Drivesub = new Driveterrain();
   //Port 0 means laptop
-  final XboxController Controller = new XboxController(0);
+   private final CommandXboxController Controller = new CommandXboxController(0); 
   final Linearaccuator Linearsub = new Linearaccuator();
   final Intake Intakesub = new Intake();
   final Flywheel Flywheelsub = new Flywheel();
   //Sendable chooser can let autos be chosen from the smart dashboard
   SendableChooser<Command> chooser = new SendableChooser<>();
-
+  boolean Intakesdeploys;
   final Camera Camsub = new Camera();
   
       
   public RobotContainer() {
     //Setting the subsytems to the commands (linking them)
     Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
-    Linearsub.setDefaultCommand(new Linearcommand(Linearsub, Controller));
-    Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
+Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
+Linearsub.setDefaultCommand(new Linearcommand(Linearsub, Controller));
     Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
     //Allowing smartdashboard to contain choices mainly for Auto routines
     SmartDashboard.putData(chooser);
+     SmartDashboard.putBoolean("bottomswitchhits", Intakesub.Bottomhit());
+    SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
     //Giving the chooser options and getting those actions from the autocommands
     //test
     chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
     //realauto
     chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
     
+
     configureBindings();
    }
 
   private void configureBindings() {
+   
+
+    Controller.a().toggleOnTrue(new StartEndCommand(()->Intakesub.Intakespeed(0.75),
+    ()-> Intakesub.Stop(),
+    Intakesub));
+
+    Controller.b().onTrue(new InstantCommand(()->{
+     
+    SmartDashboard.putBoolean("Intakedeploed?", Intakesdeploys);
+      
+      Intakesdeploys = !Intakesdeploys;
+      if (Intakesdeploys) {
+        Intakesub.Limitedintakespeed(0.25);
+      }
+      else{
+        Intakesub.Limitedintakespeed(-0.25);
+      }
+    }));
     
+    Controller.rightBumper().whileTrue(new StartEndCommand(
+      ()->Linearsub.IN_OUT(1),
+     ()->Linearsub.stop(),
+      Linearsub));
+
   }
 
   public Command getAutonomousCommand() {

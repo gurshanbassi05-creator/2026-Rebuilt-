@@ -5,17 +5,17 @@
 package frc.robot.Commands;
 
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Linearaccuator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Linearcommand extends Command {
   Linearaccuator Linearsub;
-  XboxController controller;
+  CommandXboxController controller;
   Boolean Deployed;
   
-  public Linearcommand(Linearaccuator Linearsub, XboxController controller) {
+  public Linearcommand(Linearaccuator Linearsub, CommandXboxController controller) {
     this.Linearsub = Linearsub;
     this.controller = controller;
     addRequirements(Linearsub);
@@ -30,19 +30,7 @@ public class Linearcommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (controller.getLeftBumperButtonPressed()) {
-      Linearsub.IN_OUT(1);
-    }
-    if (controller.getLeftBumperButtonReleased()) {
-      Linearsub.stop();
-    }
-    if (controller.getRightBumperButtonPressed()) {
-      Linearsub.IN_OUT(-1);
-
-    }
-    if (controller.getRightBumperButtonReleased()) {
-      Linearsub.stop();
-    } 
+    
    
    
 

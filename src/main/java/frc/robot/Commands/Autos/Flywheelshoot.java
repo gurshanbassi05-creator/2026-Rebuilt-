@@ -32,7 +32,7 @@ public class Flywheelshoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(timer.get() <= seconds){
+    if(timer.get() < seconds){
       Shootersub.Speed(1);
     }
   }
@@ -44,6 +44,6 @@ public class Flywheelshoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(seconds);
+    return timer.get()>=seconds;
   }
 }

@@ -4,17 +4,17 @@
 
 package frc.robot.Commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Flywheel;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Flywheelcommand extends Command {
   Flywheel flywheelsub;
-  XboxController controller;
+  CommandXboxController controller;
   double Trigger;
   /** Creates a new Flywheelcommand. */
-  public Flywheelcommand(Flywheel flywheelsub, XboxController controller) {
+  public Flywheelcommand(Flywheel flywheelsub, CommandXboxController controller) {
     this.flywheelsub = flywheelsub;
     this.controller = controller;
     addRequirements(flywheelsub);

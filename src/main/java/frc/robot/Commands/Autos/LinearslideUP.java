@@ -45,6 +45,6 @@ addRequirements(Linearsub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished(){
-    return timer.hasElapsed(seconds);
+    return timer.get()>seconds;
   }
 }

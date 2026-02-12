@@ -27,6 +27,7 @@ addRequirements(Drivesub);
   public void initialize() {
     timer.reset();
     timer.start();
+    System.out.println("Driveforward" + timer.get());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

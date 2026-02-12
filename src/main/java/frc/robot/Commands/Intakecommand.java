@@ -3,25 +3,28 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Commands;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Intakecommand extends Command {
   //Defing the subsytem the command will be using
    Intake Intakesub;
+   double motorspeed;
    //Defing the controller
-  XboxController controller;
+  CommandXboxController controller;
   //makes 2 booleans to toggle buttons 
   boolean Intakeon, Intakedeploy;
   //Creating a double to link it to the encoder
   //double X;
  //Links the subsytem and controller to the command
-  public Intakecommand(Intake Intakesub, XboxController controller) {
+  public Intakecommand(Intake Intakesub, CommandXboxController controller) {
     //allows it to be used in the execure methods
   this.Intakesub = Intakesub;
+
   this.controller = controller;
   //Adding requirements binding the subsytem to the command
   addRequirements(Intakesub);
@@ -41,42 +44,48 @@ public class Intakecommand extends Command {
   // Called every time the scheduler runs while the command is scheduled. At 0.2 seconds per tick
   @Override
   public void execute() {
+  SmartDashboard.putBoolean("bottomswitchhits", Intakesub.Bottomhit());
+  SmartDashboard.putBoolean("Topswitchhits", Intakesub.Tophit());
+    
+      controller.b().onTrue(new InstantCommand(
+        ()->{
+          Intakedeploy = !Intakedeploy;
+        }));
+    
+    if (Intakesub.Bottomhit() == false && Intakedeploy ) {
+      Intakesub.Limitedintakestop();
+    }
+   if (Intakesub.Tophit() == false && Intakedeploy == false) {
+    Intakesub.Limitedintakestop();
+   }
     //Setting X equal to the current encoder position
     //X = Intakesub.Getencoderposition();
     
     //The idea is to have the intake work on 1 toggable button press. 
     //Press A once to turn it on, Then press A again to turn it off
-     if (controller.getAButtonPressed()) {
+    // if (controller.getAButtonPressed()) {
       //"!" flips the boolean which turns Intakeon true
-     Intakeon = !Intakeon;
+    // Intakeon = !Intakeon;
      //If intakeon is true then set the speed to 1
-    if (Intakeon) {
-      Intakesub.Intakespeed(-0.75); 
-     }
+   // if (Intakeon) {
+    //  Intakesub.Intakespeed(-0.75); 
+    // }
      //else set the speed to 0 when the boolean is false (when the button is pused again)
-    else{
-  Intakesub.Stop();
-      }
-     }
-     if (controller.getBButtonPressed()) {
-      Intakedeploy = !Intakedeploy;
-      if (Intakedeploy) {
-        Intakesub.Limitedintakespeed(0.25);
-      }
-      if (Intakedeploy == false) {
-        Intakesub.Limitedintakespeed(-0.25);
-      }
+   // else{
+ // Intakesub.Stop();
+    //  }
+    // }
+    // if (controller.getBButtonPressed()) {
+    //  Intakedeploy = !Intakedeploy;
+    //  if (Intakedeploy) {
+    //    Intakesub.Limitedintakespeed(0.25);
+    ///  }
+    //  if (Intakedeploy == false) {
+    //    Intakesub.Limitedintakespeed(-0.25);
+     // }
     
      }
-     if (Intakesub.Topswitchhit() == false & Intakedeploy == false) {
-        Intakesub.Limitedintakestop();
-        
-      }
-      if (Intakesub.BottomLimitswitchhit() == false & Intakedeploy == true) {
-        Intakesub.Limitedintakestop();
-      }
-SmartDashboard.putBoolean("BottomSwitchmode", Intakesub.Topswitchhit());
-SmartDashboard.putBoolean("TopSwitchmode", Intakesub.BottomLimitswitchhit());
+     
 
 //Comments are for neo encoder position DO NOT DELETE
 
@@ -95,7 +104,7 @@ SmartDashboard.putBoolean("TopSwitchmode", Intakesub.BottomLimitswitchhit());
 
      //Smartdashboard can record the rotation for testing 
    //  SmartDashboard.putNumber("Number of rotations", X);
-    }
+    
 
 
   // Called once the command ends or is interrupted.
