@@ -12,7 +12,7 @@ import frc.robot.Subsytems.Flywheel;
 public class Flywheelcommand extends Command {
   Flywheel flywheelsub;
   CommandXboxController controller;
-  double Trigger;
+  double RightTrigger;
   /** Creates a new Flywheelcommand. */
   public Flywheelcommand(Flywheel flywheelsub, CommandXboxController controller) {
     this.flywheelsub = flywheelsub;
@@ -28,8 +28,10 @@ public class Flywheelcommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Trigger = controller.getRightTriggerAxis();
-      flywheelsub.Speed(Trigger);
+    RightTrigger = controller.getRightTriggerAxis();
+    
+      flywheelsub.Speed(40*RightTrigger );
+
   }
 
   // Called once the command ends or is interrupted.
