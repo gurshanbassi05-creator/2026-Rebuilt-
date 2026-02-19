@@ -15,7 +15,6 @@ import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.DriveForward;
-import frc.robot.Commands.Autos.FRWDUPAUto;
 import frc.robot.Commands.Autos.FULLHANGAUTO;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
@@ -34,7 +33,7 @@ public class RobotContainer {
   final Flywheel Flywheelsub = new Flywheel();
   //Sendable chooser can let autos be chosen from the smart dashboard
   SendableChooser<Command> chooser = new SendableChooser<>();
-  boolean Intakesdeploys;
+  boolean Intakesdeploys, Hoodup;
   final Camera Camsub = new Camera();
   
       
@@ -53,7 +52,7 @@ public class RobotContainer {
   chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
   //realauto
   chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
-  chooser.addOption("Driveup", new FRWDUPAUto(Drivesub, Linearsub));
+
   configureBindings();
  }
 
@@ -80,7 +79,16 @@ Controller.rightBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.IN_OUT(1),
 ()->Linearsub.stop(),
 Linearsub));
+
+Controller.x().toggleOnTrue(new InstantCommand(()->{
+  SmartDashboard.putBoolean("Hoodup", Hoodup);
+  if (Hoodup == false) {
+    Flywheelsub.resethood();
+  }else{
+    Flywheelsub.setservo(180);}
+  }));
 }
+
 
 public Command getAutonomousCommand() {
   //setting the auto to whatever auto the chooser has selected 

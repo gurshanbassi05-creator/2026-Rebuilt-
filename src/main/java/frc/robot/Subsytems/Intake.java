@@ -4,8 +4,6 @@
 
 package frc.robot.Subsytems;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,8 +14,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class Intake extends SubsystemBase{
-  SparkMax Intake;
-  TalonSRX Limitintake;
+  SparkMax Intake, Intakedeploy;
   RelativeEncoder encoder;
   SparkClosedLoopController pidController;
   SparkMaxConfig config;
@@ -28,7 +25,7 @@ public class Intake extends SubsystemBase{
     Intake = new SparkMax(8, MotorType.kBrushed);
     //Defining neo
     //Intakedeploy = new SparkMax(6, MotorType.kBrushless);
-    Limitintake = new TalonSRX(12);
+    Intakedeploy = new SparkMax(6, MotorType.kBrushed);
     //Using the dio ports on the RIO to initalize the digital input
     Toplimitswitch = new DigitalInput(0);
     BottomLimitswitch = new DigitalInput(1);          
@@ -56,10 +53,10 @@ public class Intake extends SubsystemBase{
    }
   
     public void Limitedintakespeed(double speed){
-      Limitintake.set(TalonSRXControlMode.PercentOutput,speed);
+     Intakedeploy.set(speed);
     }
     public void Limitedintakestop(){
-      Limitintake.set(TalonSRXControlMode.PercentOutput, 0);
+Intakedeploy.stopMotor();
     }
     
     //Encoder methods

@@ -13,7 +13,7 @@ private final UsbCamera Cam;
   /** Creates a new Camera. */
   public Camera() {
 Cam = CameraServer.startAutomaticCapture("CAMera", 0);
-Cam.setResolution(160, 120);
+Cam.setResolution(260, 220);
 Cam.setFPS(15);
   }
 
