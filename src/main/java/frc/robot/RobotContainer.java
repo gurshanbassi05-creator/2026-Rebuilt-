@@ -59,18 +59,15 @@ public class RobotContainer {
 
 private void configureBindings() {
    
-
+//Configure bindings allows subsystems to act without the use of formal commands. This is an example of a toggleable button 
  Controller.a().toggleOnTrue(new StartEndCommand(
  ()->Intakesub.Intakespeed(0.75),
  ()-> Intakesub.Stop(),
  Intakesub));
-
- Controller.b().onTrue(new InstantCommand(()->{
-     
+//Another togglebale button that allows for the reverse direction
+ Controller.b().onTrue(new InstantCommand(()->{ 
  SmartDashboard.putBoolean("Intakedeploed?", Intakesdeploys);
-    
  Intakesdeploys = !Intakesdeploys;
-
  if (Intakesdeploys) {
  Intakesub.Limitedintakespeed(0.25);
  }
@@ -78,7 +75,7 @@ private void configureBindings() {
  Intakesub.Limitedintakespeed(-0.25);
  }
  }));
-    
+  //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.IN_OUT(1),
 ()->Linearsub.stop(),
@@ -86,6 +83,7 @@ Linearsub));
 }
 
 public Command getAutonomousCommand() {
+  //setting the auto to whatever auto the chooser has selected 
  return chooser.getSelected();
 }
 }
