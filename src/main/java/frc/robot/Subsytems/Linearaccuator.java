@@ -19,11 +19,11 @@ TalonSRX Climb;
   }
  
   public void IN_OUT(double speed){
-Climb.set(TalonSRXControlMode.PercentOutput, speed);
+  Climb.set(TalonSRXControlMode.PercentOutput, speed);
   }
    
   public void stop(){    
-Climb.set(TalonSRXControlMode.PercentOutput, 0);
+  Climb.set(TalonSRXControlMode.PercentOutput, 0);
 
   }
 

@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase{
      Intakedeploy.set(speed);
     }
     public void Limitedintakestop(){
-Intakedeploy.stopMotor();
+    Intakedeploy.stopMotor();
     }
     
     //Encoder methods

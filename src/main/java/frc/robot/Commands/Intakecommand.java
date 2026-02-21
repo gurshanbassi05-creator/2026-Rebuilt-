@@ -53,11 +53,11 @@ public class Intakecommand extends Command {
         }));
     
     if (Intakesub.Bottomhit() == false && Intakedeploy ) {
-      Intakesub.Limitedintakestop();
+     Intakesub.Limitedintakestop();
     }
    if (Intakesub.Tophit() == false && Intakedeploy == false) {
     Intakesub.Limitedintakestop();
-   }
+   }}
     //Setting X equal to the current encoder position
     //X = Intakesub.Getencoderposition();
     
@@ -84,7 +84,7 @@ public class Intakecommand extends Command {
     //    Intakesub.Limitedintakespeed(-0.25);
      // }
     
-     }
+    // }
      
 
 //Comments are for neo encoder position DO NOT DELETE

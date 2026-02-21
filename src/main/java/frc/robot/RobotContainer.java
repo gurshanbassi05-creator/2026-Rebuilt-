@@ -47,14 +47,14 @@ public class RobotContainer {
   Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
   //Allowing smartdashboard to contain choices mainly for Auto routines
   SmartDashboard.putData(chooser);
-   SmartDashboard.putBoolean("bottomswitchhits", Intakesub.Bottomhit());
+  SmartDashboard.putBoolean("bottomswitchhits", Intakesub.Bottomhit());
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Giving the chooser options and getting those actions from the autocommands
   //test
-  chooser.addOption("Driveforward", new DriveForward(Drivesub, 500));
+  chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
   //realauto
   chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
-  chooser.addOption("turnto", new Turnto(Drivesub, 10));
+  chooser.addOption("turnto", new Turnto(Drivesub, 90 ));
   chooser.addOption("Encoderdriveforwrd", new Driveforwardencoder(Drivesub, 3));
   configureBindings();
  }
@@ -67,21 +67,22 @@ private void configureBindings() {
  ()-> Intakesub.Stop(),
  Intakesub));
 //Another togglebale button that allows for the reverse direction
- Controller.b().onTrue(new InstantCommand(()->{ 
- SmartDashboard.putBoolean("Intakedeploed?", Intakesdeploys);
- Intakesdeploys = !Intakesdeploys;
- if (Intakesdeploys) {
- Intakesub.Limitedintakespeed(0.25);
- }
- else{
- Intakesub.Limitedintakespeed(-0.25);
- }
- }));
+ Controller.b().onTrue(new InstantCommand(()->{
+  Intakesdeploys = !Intakesdeploys;
+if (Intakesdeploys) {
+  Intakesub.Limitedintakespeed(-0.25);
+}
+else{
+  Intakesub.Limitedintakespeed(0.25);
+}}
+   ));
+
   //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.IN_OUT(0.25),
 ()->Linearsub.stop(),
 Linearsub));
+
 Controller.leftBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.IN_OUT(-0.25),
 ()->Linearsub.stop(),
@@ -98,11 +99,12 @@ Controller.x().onTrue((new InstantCommand(()->{
     Flywheelsub.resethood();
   }
   })));
+
 }
 
 
 public Command getAutonomousCommand() {
   //setting the auto to whatever auto the chooser has selected 
  return chooser.getSelected();
-}
-}
+}}
+

@@ -21,7 +21,9 @@ public class Driveterrain extends SubsystemBase {
   
     //Defining Motors
   final SparkMax Frontleft, Frontright, Backleft, Backright;
+  //double to convert the encoders position from rotations to feet
   final double Feetperotation = 1.57;
+  //Douuble to set encoders position to 0
    double Reset =0;
   //Defining encoders
   AnalogEncoder Leftencoder, Rightencoder;
@@ -31,7 +33,6 @@ public class Driveterrain extends SubsystemBase {
   DifferentialDrive Drivebase;
   
   public Driveterrain() {
-    
 //Initalising Motors (Giving the CAN ID)
     Frontleft = new SparkMax(1, MotorType.kBrushed);
     Frontright = new SparkMax(2, MotorType.kBrushed);
@@ -39,26 +40,29 @@ public class Driveterrain extends SubsystemBase {
     Backright = new SparkMax(4, MotorType.kBrushed);
     //Defineing gyro
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    //Defining encoders
+    //Defining encoders and the analogIN port on the rio they are connected to
     Leftencoder = new AnalogEncoder(1);
     Rightencoder = new AnalogEncoder(2);
     //Tekking the drive base what values to use
     Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
   }
+  //Method to set encoders position to 0
   public void resetencoders(){
 Reset = Leftencoder.get();
 Reset = Rightencoder.get();
   }
+  //Methods to get encoders position in feet
   public double LeftPositioninfeet(){
-return Leftencoder.get()*Feetperotation;
+  return Leftencoder.get()*Feetperotation;
   }
   public double RightPositioninfeet(){
     return Rightencoder.get()*Feetperotation;
   }
- 
+ //A method that gets the hedding/angle that the rbot is at
   public Rotation2d Heading(){
-    return Rotation2d.fromRadians(gyro.getYaw());
+    return Rotation2d.fromDegrees(gyro.getYaw());
   }
+  //Method that resets the gyros values
     public void resetHeading(){
     gyro.reset();
   }
@@ -83,7 +87,7 @@ return Leftencoder.get()*Feetperotation;
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Gyroheading", Heading().getRadians());
-  
+    SmartDashboard.putNumber("Gyroheading", Heading().getDegrees());
+   
   }
 }
