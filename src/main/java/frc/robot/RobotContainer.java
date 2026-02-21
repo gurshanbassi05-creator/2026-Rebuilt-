@@ -15,7 +15,9 @@ import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.DriveForward;
+import frc.robot.Commands.Autos.Driveforwardencoder;
 import frc.robot.Commands.Autos.FULLHANGAUTO;
+import frc.robot.Commands.Autos.Turnto;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
@@ -49,10 +51,11 @@ public class RobotContainer {
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Giving the chooser options and getting those actions from the autocommands
   //test
-  chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
+  chooser.addOption("Driveforward", new DriveForward(Drivesub, 500));
   //realauto
   chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
-
+  chooser.addOption("turnto", new Turnto(Drivesub, 10));
+  chooser.addOption("Encoderdriveforwrd", new Driveforwardencoder(Drivesub, 3));
   configureBindings();
  }
 
@@ -76,17 +79,25 @@ private void configureBindings() {
  }));
   //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(1),
+()->Linearsub.IN_OUT(0.25),
+()->Linearsub.stop(),
+Linearsub));
+Controller.leftBumper().whileTrue(new StartEndCommand(
+()->Linearsub.IN_OUT(-0.25),
 ()->Linearsub.stop(),
 Linearsub));
 
-Controller.x().toggleOnTrue(new InstantCommand(()->{
+Controller.x().onTrue((new InstantCommand(()->{
   SmartDashboard.putBoolean("Hoodup", Hoodup);
-  if (Hoodup == false) {
+  SmartDashboard.putNumber("Servoposition", Flywheelsub.servoangle());
+  Hoodup = !Hoodup;
+  if (Hoodup) {
+ Flywheelsub.setservo(180); 
+ }
+ else{
     Flywheelsub.resethood();
-  }else{
-    Flywheelsub.setservo(180);}
-  }));
+  }
+  })));
 }
 
 

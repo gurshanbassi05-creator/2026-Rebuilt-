@@ -4,41 +4,42 @@
 
 package frc.robot.Commands.Autos;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsytems.Driveterrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class DriveForward extends Command {
+public class Driveforwardencoder extends Command {
   Driveterrain Drivesub;
-  double Seconds;
-  Timer timer;
-
-  public DriveForward(Driveterrain Drivesub, double Seconds) {
+  PIDController PID = new PIDController(1.25, 1, 0);
+  double distance;
+  
+  /** Creates a new Driveforwardencoder. */
+  public Driveforwardencoder(Driveterrain Drivesub, double distance) {
 this.Drivesub = Drivesub;
-this.Seconds = Seconds;
-timer = new Timer();
+this.distance = distance;
+ 
+PID.setTolerance(0.05);
+PID.setIZone(0.5);
 addRequirements(Drivesub);
-
-    }
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
-    timer.start();
-    System.out.println("Driveforward" + timer.get());
+   Drivesub.resetencoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() < Seconds) {
-      Drivesub.Drive(1, 0);
-    }
-   if (timer.get() >= Seconds) {
-    Drivesub.Stop();
-   }
+    double Leftpositon = Drivesub.LeftPositioninfeet();
+    double movement = PID.calculate(Leftpositon, distance);
+    Drivesub.Drive(movement, 0);
+    SmartDashboard.putNumber("powertodrive", movement);
+    SmartDashboard.putNumber("Encoderpositon in feet", Leftpositon);
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +49,6 @@ addRequirements(Drivesub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= Seconds;
+    return PID.atSetpoint();
   }
 }

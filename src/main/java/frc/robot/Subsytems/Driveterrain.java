@@ -11,6 +11,7 @@ import com.studica.frc.AHRS.NavXComType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,11 +20,16 @@ public class Driveterrain extends SubsystemBase {
    
   
     //Defining Motors
-  SparkMax Frontleft, Frontright, Backleft, Backright;
+  final SparkMax Frontleft, Frontright, Backleft, Backright;
+  final double Feetperotation = 1.57;
+   double Reset =0;
+  //Defining encoders
+  AnalogEncoder Leftencoder, Rightencoder;
   //Gyro
-    AHRS gyro;
+  final AHRS gyro;
   //Defining the Drivebase
   DifferentialDrive Drivebase;
+  
   public Driveterrain() {
     
 //Initalising Motors (Giving the CAN ID)
@@ -33,10 +39,23 @@ public class Driveterrain extends SubsystemBase {
     Backright = new SparkMax(4, MotorType.kBrushed);
     //Defineing gyro
     gyro = new AHRS(NavXComType.kMXP_SPI);
+    //Defining encoders
+    Leftencoder = new AnalogEncoder(1);
+    Rightencoder = new AnalogEncoder(2);
     //Tekking the drive base what values to use
     Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
-    
   }
+  public void resetencoders(){
+Reset = Leftencoder.get();
+Reset = Rightencoder.get();
+  }
+  public double LeftPositioninfeet(){
+return Leftencoder.get()*Feetperotation;
+  }
+  public double RightPositioninfeet(){
+    return Rightencoder.get()*Feetperotation;
+  }
+ 
   public Rotation2d Heading(){
     return Rotation2d.fromRadians(gyro.getYaw());
   }
