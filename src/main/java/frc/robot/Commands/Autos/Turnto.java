@@ -16,9 +16,9 @@ public class Turnto extends Command {
   /** Creates a new TurnTO. */
   Driveterrain drive;
   //change value "Kp" for rough controller and change value "ki" for smooth controll Kd will predict the error and is ectra if time is found 
-  PIDController pid = new PIDController(0.75, 1, 0);
+  PIDController pid = new PIDController(0.350, 2, 0);
   Rotation2d angle;
-  double MAX_OUTPUT = 1;
+  double MAX_OUTPUT = 0.55;
   
   public Turnto(Driveterrain drive, double angle) {
     this.drive = drive;
@@ -27,9 +27,11 @@ public class Turnto extends Command {
     pid.enableContinuousInput(-Math.PI,Math.PI);
     //PID.setIzone is the "ki" range/ sensetivity aka when robot is within this range start compling values
     //max error before it starts to compile values
-    pid.setIZone(Units.degreesToRadians(8));
+    pid.setIZone(Units.degreesToRadians(20));
     //min error before it starts to compile values
-    pid.setTolerance(Units.degreesToRadians(2));
+    pid.setTolerance(Units.degreesToRadians(5));
+    pid.setTolerance(2, 0);
+    pid.setSetpoint(angle);
     addRequirements(drive);
   }
 
@@ -39,6 +41,7 @@ public class Turnto extends Command {
   public void initialize() {
     drive.resetHeading();
     pid.reset();
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,6 +53,7 @@ public class Turnto extends Command {
     drive.Drive(0, Gyroturn);
     //display values
     SmartDashboard.putNumber("Turn pid output", Gyroturn);
+    SmartDashboard.putBoolean("Finishedturn", pid.atSetpoint());
 
   }
 

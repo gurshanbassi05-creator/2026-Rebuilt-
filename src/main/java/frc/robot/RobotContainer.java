@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,7 +17,6 @@ import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.DriveForward;
-import frc.robot.Commands.Autos.Driveforwardencoder;
 import frc.robot.Commands.Autos.FULLHANGAUTO;
 import frc.robot.Commands.Autos.Turnto;
 import frc.robot.Subsytems.Camera;
@@ -23,11 +24,13 @@ import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Intake;
 import frc.robot.Subsytems.Linearaccuator;
-
 public class RobotContainer {
+  
   //GITHUB test #69420 and 676767676767767676767676
   //Addind the subsystems and controller to the container
   final Driveterrain Drivesub = new Driveterrain();
+    private final AutoFactory autoFactory = new AutoFactory(Drivesub::getPose,Drivesub::Resetpos, 
+   Drivesub::FollowTragectory, false, Drivesub);
   //Port 0 means laptop
    private final CommandXboxController Controller = new CommandXboxController(0); 
   final Linearaccuator Linearsub = new Linearaccuator();
@@ -37,9 +40,9 @@ public class RobotContainer {
   SendableChooser<Command> chooser = new SendableChooser<>();
   boolean Intakesdeploys, Hoodup;
   final Camera Camsub = new Camera();
-  
-      
+  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Flywheelsub);
   public RobotContainer() {
+    
     //Setting the subsytems to the commands (linking them)
   Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
   Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
@@ -55,36 +58,41 @@ public class RobotContainer {
   //realauto
   chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
   chooser.addOption("turnto", new Turnto(Drivesub, 90 ));
-  chooser.addOption("Encoderdriveforwrd", new Driveforwardencoder(Drivesub, 3));
-  configureBindings();
+    chooser.addOption("Choreodrivefrwd", choreoAutos.path1Auto());
+    configureBindings();
+  
  }
 
 private void configureBindings() {
    
 //Configure bindings allows subsystems to act without the use of formal commands. This is an example of a toggleable button 
  Controller.a().toggleOnTrue(new StartEndCommand(
- ()->Intakesub.Intakespeed(0.75),
+ ()->Intakesub.Intakespeed(-0.75),
  ()-> Intakesub.Stop(),
  Intakesub));
 //Another togglebale button that allows for the reverse direction
  Controller.b().onTrue(new InstantCommand(()->{
-  Intakesdeploys = !Intakesdeploys;
-if (Intakesdeploys) {
-  Intakesub.Limitedintakespeed(-0.25);
+  Intakesub.Limitedintakespeed(0.45);
+  if (Intakesub.Bottomhit()) {
+    Intakesub.Limitedintakestop();
 }
-else{
-  Intakesub.Limitedintakespeed(0.25);
-}}
-   ));
-
+}
+));
+Controller.x().onTrue(new InstantCommand(
+  ()-> { Intakesub.Limitedintakespeed(-1);
+   if (Intakesub.Tophit()) {
+  Intakesub.Limitedintakestop();
+}
+}
+));
   //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(0.25),
+()->Linearsub.IN_OUT(-0.45),
 ()->Linearsub.stop(),
 Linearsub));
 
 Controller.leftBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(-0.25),
+()->Linearsub.IN_OUT(0.45),
 ()->Linearsub.stop(),
 Linearsub));
 

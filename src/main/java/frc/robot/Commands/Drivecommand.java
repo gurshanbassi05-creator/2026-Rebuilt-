@@ -5,7 +5,6 @@
 package frc.robot.Commands;
 
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Driveterrain;
@@ -14,7 +13,7 @@ public class Drivecommand extends Command {
   //Adding the drive subsystem and controller
   Driveterrain Drivesub;
   CommandXboxController Controller;
-  CameraServer Cam;
+  
   public Drivecommand(Driveterrain Drivesub, CommandXboxController Controller) {
     this.Drivesub = Drivesub;
     this.Controller = Controller;

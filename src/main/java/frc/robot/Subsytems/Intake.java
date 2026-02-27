@@ -18,7 +18,8 @@ public class Intake extends SubsystemBase{
   RelativeEncoder encoder;
   SparkClosedLoopController pidController;
   SparkMaxConfig config;
-   DigitalInput Toplimitswitch, BottomLimitswitch;
+  DigitalInput Toplimitswitch, BottomLimitswitch;
+   
  
   /** Creates a new Intake. */
   public Intake() { 
