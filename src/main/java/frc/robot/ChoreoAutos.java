@@ -22,7 +22,7 @@ this.autofactory = autofactory;
 
     public Command path1Auto() {
         var routine = autofactory.newRoutine("Path1Auto");
-        var traj = Path_1.asAutoTraj(routine);
+        var traj = Drvie360.asAutoTraj(routine);
 
         routine.active().onTrue(
             Commands.sequence(
@@ -34,11 +34,11 @@ this.autofactory = autofactory;
     }
     public Command shootdrive(){
         var Path3 = autofactory.newRoutine("Shootplan");
-        var trag1 = Path_1.asAutoTraj(Path3);
+        var trag1 = Drvie360.asAutoTraj(Path3);
         
        return Commands.sequence(
-        new Flywheelshoot(Flywheelsub, 5),
         trag1.resetOdometry(),
+        new Flywheelshoot(Flywheelsub, 2),
         trag1.cmd()
         );
      

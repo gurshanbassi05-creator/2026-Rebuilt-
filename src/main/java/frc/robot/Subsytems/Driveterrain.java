@@ -6,11 +6,8 @@ package frc.robot.Subsytems;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
 import choreo.trajectory.DifferentialSample;
-
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.controller.LTVUnicycleController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,29 +18,40 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ThriftyAbsoluteEncoder;
-
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.units.measure.Voltage;
+import static edu.wpi.first.units.Units.*;
+// Remove: import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog; (This is old)
 public class Driveterrain extends SubsystemBase {
    private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
-  private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(9);
-  private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(8);
+  private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(0);
+  private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(1);
+  
     //Defining Motors
 final SparkMax Frontleft, Frontright, Backleft, Backright;
   //double to convert the encoders position from rotations to feet public final double Drive_To_gearratio = 1;
 public final double Wheel_Radius_inmeter = Units.inchesToMeters(3);
+public final double wheel_Diameter = Units.inchesToMeters(6);
 public final double Trackwidth_inmeter = Units.inchesToMeters(22.5);
+private final double Circumference = Math.PI*wheel_Diameter;
 private final double Drive_To_gearratio = 1;
-public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);  
+public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+private final SysIdRoutine Routine = new SysIdRoutine(new SysIdRoutine.Config(),
+ new SysIdRoutine.Mechanism(this::Drievvoltage, this::Logmotors, this));
+
 //private final SimpleMotorFeedforward Motorfeed = new SimpleMotorFeedforward(Wheel_Radius_inmeter, Trackwidth_inmeter, Drive_To_gearratio);
 public final DifferentialDriveKinematics KINE = new DifferentialDriveKinematics(Trackwidth_inmeter);
 public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry(
-  getGyroheading(),
+  Heading(),
   Leftpose(),
   Rightpose());
   //Defining encoders
   
-  //Gyro
+  
   //Defining the Drivebase
   DifferentialDrive Drivebase;
   
@@ -53,14 +61,24 @@ public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry
     Frontright = new SparkMax(2, MotorType.kBrushed);
     Backleft = new SparkMax(3, MotorType.kBrushed);
     Backright = new SparkMax(4, MotorType.kBrushed);
-    //Defineing gyro
-    
-    //Defining encoders and the analogIN port on the rio they are connected to
-   
-    //Tekking the drive base what values to use
   Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
-  }
   
+  }
+ public void Drievvoltage(Voltage V){
+  Frontleft.setVoltage(-V.in(Volts));
+  Frontright.setVoltage(V.in(Volts));
+ }
+ public void Logmotors(SysIdRoutineLog Log){
+Log.motor("Leftmotors")
+.voltage(Volts.of(Frontleft.getBusVoltage()*Frontleft.getAppliedOutput()))
+.linearPosition(Meters.of(Leftpose()))
+.linearVelocity(MetersPerSecond.of(Leftencoder.getvelocity()*Circumference));
+Log.motor("Rightmotor").voltage(Volts.of(Frontright.getBusVoltage()*Frontright.getAppliedOutput()))
+.linearPosition(Meters.of(Rightpose()))
+.linearVelocity(MetersPerSecond.of(Rightencoder.getvelocity()*Circumference));
+}
+
+
   public Pose2d getPose(){
 return Estimator.getPoseMeters();
   }
@@ -88,7 +106,7 @@ public void Resetpos(Pose2d Pose){
   return Leftencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
 }
   public double Rightpose(){
-  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
+  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter*-1;
 }
  //A method that gets the hedding/angle that the rbot is at
   public Rotation2d Heading(){
@@ -116,9 +134,24 @@ public void Resetpos(Pose2d Pose){
   public void Stop(){
     Drivebase.arcadeDrive(0, 0);
   }
+public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return Routine.quasistatic(direction) .beforeStarting(() -> 
+    Drivebase.setSafetyEnabled(false)) // Turn off safety
+        .andThen(() -> Drivebase.setSafetyEnabled(true));      // Turn it back on after
+}
+
+/** Returns a command to run the dynamic (step voltage) test */
+public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return Routine.dynamic(direction)
+     .beforeStarting(() -> Drivebase.setSafetyEnabled(false)) // Turn off safety
+        .andThen(() -> Drivebase.setSafetyEnabled(true));      // Turn it back on after
+}
+
   @Override
   public void periodic() {
   Estimator.update(getGyroheading(), Leftpose(), Rightpose());
+  SmartDashboard.putNumber("leftencoder", Leftpose());
+   SmartDashboard.putNumber("Rightencoder", Rightpose());
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Odom (X)", Estimator.getPoseMeters().getX());
     SmartDashboard.putNumber("Odom (Y)", Estimator.getPoseMeters().getY());

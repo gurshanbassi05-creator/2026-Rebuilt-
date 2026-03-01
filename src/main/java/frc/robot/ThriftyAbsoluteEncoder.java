@@ -5,14 +5,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.Timer;
 
 /** Absolute encoder wrapper for Thriftybot using WPILib DutyCycleEncoder. */
 public final class ThriftyAbsoluteEncoder {
-  private final DutyCycleEncoder encoder;
+  private final AnalogEncoder encoder;
   private final double absoluteOffset;
-
+  private double lastposition = 0;
   private double lastAbsolute;
+  private double Lasttime = Timer.getFPGATimestamp();
   private boolean hasLastValue = false;
   private double relativePosition;
 
@@ -24,13 +26,14 @@ public final class ThriftyAbsoluteEncoder {
 
   /** Creates the encoder using a PWM port and a full-turn absolute offset (rotations). */
   public ThriftyAbsoluteEncoder(int pwmPort, double absoluteOffset) {
-    this.encoder = new DutyCycleEncoder(pwmPort);
+    this.encoder = new AnalogEncoder(pwmPort);
     this.absoluteOffset = absoluteOffset;
   }
 
   /** Returns absolute position in rotations [0, 1). */
   public double getAbsoluteRotations() {
     return wrapToUnit(encoder.get() - absoluteOffset);
+    
   }
 
   public double getAbsoluteDegrees() {
@@ -78,7 +81,19 @@ public final class ThriftyAbsoluteEncoder {
     lastAbsolute = absolute;
     hasLastValue = true;
   }
+public double getvelocity(){
+double currenttime = Timer.getFPGATimestamp();
+double currentpose = this.getRelativeRotations();
 
+double deltatime = currenttime - Lasttime;
+double deltapose = currentpose - lastposition;
+
+double velocity =(deltatime>0) ? (deltapose/deltatime):0;
+lastposition = currentpose;
+Lasttime = currenttime;
+
+return velocity;
+}
   private static double wrapToUnit(double value) {
     double wrapped = value - Math.floor(value);
     if (wrapped < 0.0) {

@@ -4,7 +4,22 @@
  "type":"Differential",
  "variables":{
   "expressions":{},
-  "poses":{}
+  "poses":{
+   "Startpos":{
+    "x":{
+     "exp":"3.342125415802002 m",
+     "val":3.342125415802002
+    },
+    "y":{
+     "exp":"4.091573715209961 m",
+     "val":4.091573715209961
+    },
+    "heading":{
+     "exp":"3.141592653589793 rad",
+     "val":3.141592653589793
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
@@ -28,8 +43,8 @@
    }
   },
   "mass":{
-   "exp":"73.34 lbs",
-   "val":33.2664644158
+   "exp":"90 lbs",
+   "val":40.8233133
   },
   "inertia":{
    "exp":"6 kg m ^ 2",

@@ -33,7 +33,8 @@ public class Flywheelshoot extends Command {
   @Override
   public void execute() {
     if(timer.get() < seconds){
-      Shootersub.Speed(1);
+      Shootersub.FlywheelSpeed(0.5);
+      Shootersub.Kickspeed(1);
     }
   }
 
