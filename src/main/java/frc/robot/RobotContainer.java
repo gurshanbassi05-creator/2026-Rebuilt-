@@ -8,7 +8,6 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +19,8 @@ import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
+import frc.robot.Commands.Autos.Intakedeployauto;
+import frc.robot.Commands.Autos.Intakeretract;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
@@ -70,12 +71,11 @@ Controller.a().toggleOnTrue(new StartEndCommand(
  ()->Intakesub.Intakespeed(-0.75),
  ()-> Intakesub.Stop(),
  Intakesub));
-//Another togglebale button that allows for the reverse direction
-Controller.b().onTrue(new InstantCommand(()->{
-  Intakesub.Limitedintakespeed(1);
-  Intakesub.Limitedintakespeed(0);
  
-  }));
+ Controller.b().onTrue(new Intakedeployauto(Intakesub));
+ Controller.x().onTrue(new Intakeretract(Intakesub));
+//Another togglebale button that allows for the reverse direction
+
   //Temporary bindings for Sysid testing
 Controller.a()
     .whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -90,10 +90,7 @@ Controller.rightBumper().and(Controller.y())
     .whileTrue(Drivesub.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
 //Example of a command that stops when given a certain trigger
-Controller.x().onTrue(new InstantCommand(
- ()-> { Intakesub.Limitedintakespeed(-1);
-  Intakesub.Limitedintakespeed(0);
- }));
+
   //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.IN_OUT(1),
