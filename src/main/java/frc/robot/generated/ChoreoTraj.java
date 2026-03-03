@@ -24,12 +24,54 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
-    public static final ChoreoTraj Drvie360 = new ChoreoTraj(
+    public static final ChoreoTraj BallstoHUB = new ChoreoTraj(
+	    "BallstoHUB",
+	    OptionalInt.empty(),
+	    1.53684,
+	    new Pose2d(0.729, 5.953, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
+	);
+	public static final ChoreoTraj Drvie360 = new ChoreoTraj(
 	    "Drvie360",
 	    OptionalInt.empty(),
-	    0.81018,
-	    new Pose2d(2.685, 6.399, Rotation2d.fromRadians(-1.548)),
-	    new Pose2d(2.671, 3.323, Rotation2d.fromRadians(-1.64))
+	    2.83976,
+	    new Pose2d(0.488, 1.334, Rotation2d.fromRadians(-0.04)),
+	    new Pose2d(14.689, 0.915, Rotation2d.fromRadians(0))
+	);
+	public static final ChoreoTraj HubtoBalls = new ChoreoTraj(
+	    "HubtoBalls",
+	    OptionalInt.empty(),
+	    1.52697,
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01)),
+	    new Pose2d(0.729, 5.953, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj HubtoHang = new ChoreoTraj(
+	    "HubtoHang",
+	    OptionalInt.empty(),
+	    0.82838,
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01)),
+	    new Pose2d(1.582, 3.735, Rotation2d.fromRadians(0))
+	);
+	public static final ChoreoTraj HubtoHumans = new ChoreoTraj(
+	    "HubtoHumans",
+	    OptionalInt.empty(),
+	    1.94074,
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01)),
+	    new Pose2d(0.718, 0.656, Rotation2d.fromRadians(-3.141))
+	);
+	public static final ChoreoTraj Lefttohub = new ChoreoTraj(
+	    "Lefttohub",
+	    OptionalInt.empty(),
+	    1.7068,
+	    new Pose2d(3.574, 6.052, Rotation2d.fromRadians(0)),
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
+	);
+	public static final ChoreoTraj Righttohub = new ChoreoTraj(
+	    "Righttohub",
+	    OptionalInt.empty(),
+	    1.61771,
+	    new Pose2d(3.576, 2.004, Rotation2d.fromRadians(0)),
+	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
 	);
 
     /**
@@ -37,7 +79,13 @@ public record ChoreoTraj(
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
-    	Map.entry("Drvie360", Drvie360)
+    	Map.entry("BallstoHUB", BallstoHUB),
+		Map.entry("Drvie360", Drvie360),
+		Map.entry("HubtoBalls", HubtoBalls),
+		Map.entry("HubtoHang", HubtoHang),
+		Map.entry("HubtoHumans", HubtoHumans),
+		Map.entry("Lefttohub", Lefttohub),
+		Map.entry("Righttohub", Righttohub)
     );
 
     /**

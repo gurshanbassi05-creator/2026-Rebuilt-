@@ -6,39 +6,36 @@ package frc.robot.Commands.Autos;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsytems.Driveterrain;
+import frc.robot.Subsytems.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class DriveForward extends Command {
-  Driveterrain Drivesub;
-  double Seconds;
-  Timer timer;
-
-  public DriveForward(Driveterrain Drivesub, double Seconds) {
-this.Drivesub = Drivesub;
-this.Seconds = Seconds;
-timer = new Timer();
-addRequirements(Drivesub);
-
-    }
+public class Intakerollers extends Command {
+  Intake Intakesub;
+  double seconds;
+  Timer times;
+  /** Creates a new Intakerollers. */
+  public Intakerollers(Intake Intakesub, double seconds) {
+    this.Intakesub = Intakesub;
+    this.seconds = seconds;
+    addRequirements(Intakesub);
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
-    timer.start();
-    System.out.println("Driveforward" + timer.get());
+    times.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() < Seconds) {
-      Drivesub.Drive(1, 0);
+    if (times.get()<seconds) {
+      Intakesub.Intakespeed(-0.75);
     }
-   if (timer.get() >= Seconds) {
-    Drivesub.Stop();
-   }
+    else{
+      Intakesub.Stop();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +45,6 @@ addRequirements(Drivesub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= Seconds;
+    return times.get()>seconds;
   }
 }

@@ -8,7 +8,11 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import choreo.trajectory.DifferentialSample;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.VecBuilder;
+
 import edu.wpi.first.math.controller.LTVUnicycleController;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +32,10 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 // Remove: import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog; (This is old)
 public class Driveterrain extends SubsystemBase {
-   private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
+   private final LTVUnicycleController controller = new LTVUnicycleController(
+    VecBuilder.fill(0.06, 0.06, 0.1), // Q: Allow 6cm error in X/Y, 0.1 rad in Heading
+    VecBuilder.fill(1.0, 2.0),     // R: Max control effort (usually 12V)
+    0.02);
   private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(0);
   private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(1);
   
@@ -42,8 +50,8 @@ private final double Drive_To_gearratio = 1;
 public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 private final SysIdRoutine Routine = new SysIdRoutine(new SysIdRoutine.Config(),
  new SysIdRoutine.Mechanism(this::Drievvoltage, this::Logmotors, this));
-
-//private final SimpleMotorFeedforward Motorfeed = new SimpleMotorFeedforward(Wheel_Radius_inmeter, Trackwidth_inmeter, Drive_To_gearratio);
+private final Field2d m_field = new Field2d();
+private final SimpleMotorFeedforward Feed = new SimpleMotorFeedforward(1, 1, 1);
 public final DifferentialDriveKinematics KINE = new DifferentialDriveKinematics(Trackwidth_inmeter);
 public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry(
   Heading(),
@@ -81,11 +89,14 @@ Log.motor("Rightmotor").voltage(Volts.of(Frontright.getBusVoltage()*Frontright.g
 
   public Pose2d getPose(){
 return Estimator.getPoseMeters();
+
   }
   public void FollowTragectory(DifferentialSample Sample){
 Pose2d pose = Estimator.getPoseMeters();
-ChassisSpeeds ff = Sample.getChassisSpeeds();
-ChassisSpeeds Speeds = controller.calculate(pose, Sample.getPose(), ff.vxMetersPerSecond, ff.omegaRadiansPerSecond);
+ChassisSpeeds Targetspeeds = Sample.getChassisSpeeds();
+ChassisSpeeds Speeds = controller.calculate(pose, Sample.getPose(), 
+Targetspeeds.vxMetersPerSecond, 
+Targetspeeds.omegaRadiansPerSecond);
 DifferentialDriveWheelSpeeds wheelSpeeds = KINE.toWheelSpeeds(Speeds);
 Drive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
   }
@@ -155,6 +166,9 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Odom (X)", Estimator.getPoseMeters().getX());
     SmartDashboard.putNumber("Odom (Y)", Estimator.getPoseMeters().getY());
+    SmartDashboard.putData("Field", m_field);
+  m_field.setRobotPose(Estimator.getPoseMeters());
+
     SmartDashboard.putNumber("Gyroheading", Heading().getDegrees());
    
   }

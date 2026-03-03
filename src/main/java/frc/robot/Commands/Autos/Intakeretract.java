@@ -2,47 +2,38 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Commands;
+package frc.robot.Commands.Autos;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Subsytems.Flywheel;
+import frc.robot.Subsytems.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Flywheelcommand extends Command {
-  Flywheel flywheelsub;
-  CommandXboxController controller;
-  double RightTrigger, Lefttrigger;
-  /** Creates a new Flywheelcommand. */
-  public Flywheelcommand(Flywheel flywheelsub, CommandXboxController controller) {
-    this.flywheelsub = flywheelsub;
-    this.controller = controller;
-    addRequirements(flywheelsub);
+public class Intakeretract extends Command {
+  Intake Intakesub;
+  /** Creates a new Intakeretract. */
+  public Intakeretract(Intake Intakesub) {
+    this.Intakesub = Intakesub;
+    addRequirements(Intakesub);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RightTrigger = controller.getRightTriggerAxis();
-    Lefttrigger = controller.getLeftTriggerAxis();
-    flywheelsub.FlywheelSpeed(-0.9*RightTrigger);
-    flywheelsub.Kickspeed(-Lefttrigger);
+    Intakesub.Limitedintakespeed(1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Intakesub.Tophit() == false;
   }
 }

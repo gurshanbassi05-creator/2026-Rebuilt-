@@ -20,9 +20,6 @@ import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Linearcommand;
-import frc.robot.Commands.Autos.DriveForward;
-import frc.robot.Commands.Autos.FULLHANGAUTO;
-import frc.robot.Commands.Autos.Turnto;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
@@ -36,7 +33,6 @@ public class RobotContainer {
   final Intake Intakesub = new Intake();
   final Flywheel Flywheelsub = new Flywheel();
   //General timers;
-  private final Timer time = new Timer();
   //Adding Autofactory for Choreo
   private final AutoFactory autoFactory = new AutoFactory(Drivesub::getPose,Drivesub::Resetpos, 
   Drivesub::FollowTragectory, false, Drivesub);
@@ -45,7 +41,7 @@ public class RobotContainer {
   SendableChooser<Command> chooser = new SendableChooser<>();
   boolean Intakesdeploys;
   final Camera Camsub = new Camera();
-  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Flywheelsub);
+  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Drivesub, Flywheelsub);
   public RobotContainer() {
     
     //Setting the subsytems to the commands (linking them)
@@ -60,9 +56,6 @@ public class RobotContainer {
   SmartDashboard.putBoolean("bottomswitchhits", Intakesub.Bottomhit());
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Linking the autos to chosers
-  chooser.addOption("Driveforward", new DriveForward(Drivesub, 5));
-  chooser.addOption("FUllhang", new FULLHANGAUTO(Drivesub, Linearsub, Flywheelsub));
-  chooser.addOption("turnto", new Turnto(Drivesub, 90 ));
   chooser.addOption("Choreodrivefrwd", choreoAutos.path1Auto());
   chooser.addOption("Shootdeitve", choreoAutos.shootdrive());
   //Datalog started for Sysid testing
@@ -79,9 +72,10 @@ Controller.a().toggleOnTrue(new StartEndCommand(
  Intakesub));
 //Another togglebale button that allows for the reverse direction
 Controller.b().onTrue(new InstantCommand(()->{
-  Intakesub.Limitedintakespeed(0.45);
-  if (Intakesub.Bottomhit()) {
-  Intakesub.Limitedintakestop();}}));
+  Intakesub.Limitedintakespeed(1);
+  Intakesub.Limitedintakespeed(0);
+ 
+  }));
   //Temporary bindings for Sysid testing
 Controller.a()
     .whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -98,11 +92,11 @@ Controller.rightBumper().and(Controller.y())
 //Example of a command that stops when given a certain trigger
 Controller.x().onTrue(new InstantCommand(
  ()-> { Intakesub.Limitedintakespeed(-1);
-  if (Intakesub.Tophit()) {
-  Intakesub.Limitedintakestop();}}));
+  Intakesub.Limitedintakespeed(0);
+ }));
   //Non toggleable button
 Controller.rightBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(-0.45),
+()->Linearsub.IN_OUT(1),
 ()->Linearsub.stop(),
 Linearsub));
 
@@ -111,23 +105,9 @@ Controller.leftBumper().whileTrue(new StartEndCommand(
 ()->Linearsub.stop(),
 Linearsub));
 
-Controller.rightTrigger().whileTrue(new StartEndCommand(
-  ()->Flywheelsub.FlywheelSpeed(-0.75),
-  ()->Flywheelsub.Stop(),
-  Flywheelsub));
-//Examples for a delay added in a command
-Controller.rightTrigger().onTrue(new InstantCommand(
-  ()->time.reset()));
 
-Controller.rightTrigger().whileTrue(new StartEndCommand(
-  ()->{
-  if (time.get()>3) {
-    Flywheelsub.Kickspeed(1);}
-  else{
-    Flywheelsub.Kickspeed(0);
-    }},
-  ()->Flywheelsub.Kickspeed(0),
-  Flywheelsub));
+//Examples for a delay added in a command
+
 }
 
 
@@ -136,4 +116,3 @@ public Command getAutonomousCommand() {
   //setting the auto to whatever auto the chooser has selected 
  return chooser.getSelected();
 }}
-
