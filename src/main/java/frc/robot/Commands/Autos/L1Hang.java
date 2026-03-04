@@ -4,29 +4,37 @@
 
 package frc.robot.Commands.Autos;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsytems.Intake;
+import frc.robot.Subsytems.Hanging;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Intakeretract extends Command {
-  Intake Intakesub;
-  /** Creates a new Intakeretract. */
-  public Intakeretract(Intake Intakesub) {
-    this.Intakesub = Intakesub;
-    addRequirements(Intakesub);
+public class L1Hang extends Command {
+  Hanging Hangsub;
+  Timer Time;
+  /** Creates a new L1Hang. */
+  public L1Hang(Hanging Hangsub) {
+this.Hangsub = Hangsub;
+
+addRequirements(Hangsub);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Time.reset();
+    Time.start();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Intakesub.Limitedintakespeed(-1);
-    if (Intakesub.Tophit() == false) {
-      Intakesub.Limitedintakespeed(0);
+    if (Time.get()< 5) {
+      Hangsub.Telscopicspeed(1);
+    }
+    if (Time.get()> 5) {
+      Hangsub.Telscopicspeed(-1);
     }
   }
 
@@ -37,6 +45,6 @@ public class Intakeretract extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Intakesub.Tophit() == false;
+    return Time.get() > 8;
   }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot.Commands.Autos;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsytems.Intake;
 
@@ -25,7 +26,14 @@ public class Intakedeployauto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Intakesub.Limitedintakespeed(-0.35);
+    SmartDashboard.putBoolean("Bottomhit", Intakesub.Bottomhit());
+
+    Intakesub.Limitedintakespeed(0.35);
+    if (Intakesub.Bottomhit() == false) {
+      Intakesub.Limitedintakespeed(0);
+    }
+        SmartDashboard.putBoolean("Tophit", Intakesub.Tophit());
+
   }
 
   // Called once the command ends or is interrupted.

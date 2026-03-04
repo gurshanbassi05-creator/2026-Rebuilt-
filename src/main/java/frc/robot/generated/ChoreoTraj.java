@@ -27,16 +27,16 @@ public record ChoreoTraj(
     public static final ChoreoTraj BallstoHUB = new ChoreoTraj(
 	    "BallstoHUB",
 	    OptionalInt.empty(),
-	    1.53684,
+	    1.55985,
 	    new Pose2d(0.729, 5.953, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
+	    new Pose2d(3.342, 4.092, Rotation2d.fromRadians(0.003))
 	);
 	public static final ChoreoTraj Drvie360 = new ChoreoTraj(
 	    "Drvie360",
 	    OptionalInt.empty(),
-	    0.74586,
-	    new Pose2d(2.053, 5.223, Rotation2d.fromRadians(-1.529)),
-	    new Pose2d(2.229, 1.559, Rotation2d.fromRadians(-1.72))
+	    0.73861,
+	    new Pose2d(2.053, 5.223, Rotation2d.fromRadians(-1.618)),
+	    new Pose2d(2.229, 1.559, Rotation2d.fromRadians(-1.523))
 	);
 	public static final ChoreoTraj HubtoBalls = new ChoreoTraj(
 	    "HubtoBalls",

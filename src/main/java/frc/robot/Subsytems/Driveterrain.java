@@ -3,12 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Subsytems;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import choreo.trajectory.DifferentialSample;
@@ -37,21 +32,17 @@ public class Driveterrain extends SubsystemBase {
    private final LTVUnicycleController controller = new LTVUnicycleController(0.2);     // R: Max control effort (usually 12V);
   private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(0);
   private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(1);
-  
+  private final double kMaxSpeed = 3.0;
     //Defining Motors
 final SparkMax Frontleft, Frontright, Backleft, Backright;
   //double to convert the encoders position from rotations to feet public final double Drive_To_gearratio = 1;
 public final double Wheel_Radius_inmeter = Units.inchesToMeters(3);
+public final double Diameter = Units.inchesToMeters(6);
+
 public final double wheel_Diameter = Units.inchesToMeters(6);
 public final double Trackwidth_inmeter = Units.inchesToMeters(22.5);
-final SparkClosedLoopController leftPID;
-final SparkClosedLoopController rightPID;
 private final double Circumference = Math.PI*wheel_Diameter;
-private final double kGearRatio = 8.45; 
-private final double kWheelDiameterMeters = 0.1524;
-private final double kMPS_to_RPM = (kGearRatio * 60) / (Math.PI * kWheelDiameterMeters);
-final SparkMaxConfig rightconfig = new SparkMaxConfig();
-final SparkMaxConfig leftConfig = new SparkMaxConfig();
+
 private final double Drive_To_gearratio = 1;
 public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 private final SysIdRoutine Routine = new SysIdRoutine(new SysIdRoutine.Config(),
@@ -75,30 +66,9 @@ public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry
     Backleft = new SparkMax(3, MotorType.kBrushed);
     Backright = new SparkMax(4, MotorType.kBrushed);
   Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
-  leftPID = Frontleft.getClosedLoopController();
-  rightPID = Frontright.getClosedLoopController();
-  rightconfig.closedLoop
-        .p(0.0001)   // Proportional gain (Correction)
-    .i(0.0)
-    .d(0.0)
-    // Access the nested feedForward config
-    .feedForward
-        .kV(0.00017) // kV is the new "Velocity Feedforward"
-        .kS(0.0);    // kS is Static Feedforward (to overcome friction)
-        leftConfig.closedLoop
-        .p(0.0001)   // Proportional gain (Correction)
-    .i(0.0)
-    .d(0.0)
-    // Access the nested feedForward config
-    .feedForward
-        .kV(0.00017) // kV is the new "Velocity Feedforward"
-        .kS(0.0);    // kS is Static Feedforward (to overcome friction)
-  leftConfig.follow(Frontleft);
-  rightconfig.follow(Frontright, true);
-  Backleft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-   Backright.configure(rightconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-   
-  }
+
+  
+}
  public void Drievvoltage(Voltage V){
   Frontleft.setVoltage(-V.in(Volts));
   Frontright.setVoltage(V.in(Volts));
@@ -118,25 +88,34 @@ Log.motor("Rightmotor").voltage(Volts.of(Frontright.getBusVoltage()*Frontright.g
 return Estimator.getPoseMeters();
 
   }
-  public void FollowTragectory(DifferentialSample Sample){
-Pose2d pose = Estimator.getPoseMeters();
-ChassisSpeeds Targetspeeds = Sample.getChassisSpeeds();
-ChassisSpeeds Speeds = controller.calculate(pose, Sample.getPose(), 
-Targetspeeds.vxMetersPerSecond, 
-Targetspeeds.omegaRadiansPerSecond);
-DifferentialDriveWheelSpeeds wheelSpeeds = KINE.toWheelSpeeds(Speeds);
-driveVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+ public void FollowTragectory(DifferentialSample sample) {
+    Pose2d pose = Estimator.getPoseMeters();
+    
+    // 1. Get the planned speeds from the Choreo file
+    ChassisSpeeds targetChassisSpeeds = sample.getChassisSpeeds();
+    DifferentialDriveWheelSpeeds targetWheelSpeeds = KINE.toWheelSpeeds(targetChassisSpeeds);
 
+    // 2. Calculate the CORRECTION (Feedback)
+    // We use the vx and omega from targetChassisSpeeds
+    ChassisSpeeds correctionSpeeds = controller.calculate(
+        pose, 
+        sample.getPose(), 
+        targetChassisSpeeds.vxMetersPerSecond, 
+        targetChassisSpeeds.omegaRadiansPerSecond
+    );
+    DifferentialDriveWheelSpeeds correctionWheelSpeeds = KINE.toWheelSpeeds(correctionSpeeds);
+
+    // 3. Add Feedforward + Feedback
+    double leftFinal = targetWheelSpeeds.leftMetersPerSecond + correctionWheelSpeeds.leftMetersPerSecond;
+    double rightFinal = targetWheelSpeeds.rightMetersPerSecond + correctionWheelSpeeds.rightMetersPerSecond;
+
+    // 4. Send to motors
+    Setwheelspeeds(leftFinal, rightFinal);
+}
+  public void Setwheelspeeds(double LMS, double RMS){
+Leftmotors(LMS/kMaxSpeed);
+Rightmotors(RMS/kMaxSpeed);
   }
-  public void driveVelocity(double leftMPS, double rightMPS) {
-        // Direct conversion math
-        double leftTargetRPM = leftMPS * kMPS_to_RPM;
-        double rightTargetRPM = rightMPS * kMPS_to_RPM;
-
-        // Command the motors to hit that RPM using internal PID
-        leftPID.setSetpoint(leftTargetRPM, ControlType.kVelocity);
-        rightPID.setSetpoint(rightTargetRPM, ControlType.kVelocity);
-    }
   public Rotation2d getGyroheading(){
     return new Rotation2d(gyro.getAngle()*Math.PI/180);
   }
@@ -151,10 +130,10 @@ public void Resetpos(Pose2d Pose){
   }
 
   public double Leftpose(){
-  return Leftencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
+  return Leftencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Diameter;
 }
   public double Rightpose(){
-  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
+  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Diameter;
 }
  //A method that gets the hedding/angle that the rbot is at
   public Rotation2d Heading(){
@@ -171,8 +150,8 @@ public void Resetpos(Pose2d Pose){
   }
   //Grouping Rightmotors
   public void Rightmotors(double speed){
-    Frontright.set(speed);
-    Backright.set(speed);
+    Frontright.set(-speed);
+    Backright.set(-speed);
   }
   //Creating a Method to set the Drivebase with 2 doubles
   public void Drive(double speed, double turn){

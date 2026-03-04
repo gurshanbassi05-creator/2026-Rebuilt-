@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
-import frc.robot.Commands.Intakecommand;
 import frc.robot.Commands.Autos.Intakedeployauto;
 import frc.robot.Commands.Autos.Intakeretract;
+import frc.robot.Commands.Autos.Timeddrive;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
@@ -33,19 +33,22 @@ public class RobotContainer {
   final Flywheel Flywheelsub = new Flywheel();
   //General timers;
   //Adding Autofactory for Choreo
-  private final AutoFactory autoFactory = new AutoFactory(Drivesub::getPose,Drivesub::Resetpos, 
-  Drivesub::FollowTragectory, false, Drivesub);
- 
+private final AutoFactory autoFactory = new AutoFactory(
+    Drivesub::getPose, 
+    Drivesub::Resetpos, 
+    Drivesub::FollowTragectory, 
+    false, 
+    Drivesub
+);
   //Sendable chooser can let autos be chosen from the smart dashboard
   SendableChooser<Command> chooser = new SendableChooser<>();
   boolean Intakesdeploys;
   final Camera Camsub = new Camera();
-  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Drivesub, Flywheelsub);
+  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Drivesub, Flywheelsub, Hangsub, Intakesub);
   public RobotContainer() {
     
     //Setting the subsytems to the commands (linking them)
   Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
-  Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
   Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
   //Allowing smartdashboard to contain choices mainly for Auto routines 
   //Giving the chooser options and getting those actions from the autocommands
@@ -55,11 +58,12 @@ public class RobotContainer {
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Linking the autos to chosers
   chooser.addOption("Choreodrivefrwd", choreoAutos.path1Auto());
-  chooser.addOption("Shootdeitve", choreoAutos.shootdrive());
+      chooser.addOption("TimedShoot", choreoAutos.Timedshoot());
+      chooser.addOption("TimedFRWD", new Timeddrive(Drivesub, 5,0.5));
+chooser.addOption("Choreoshoothang", choreoAutos.ShootHang());
   //Datalog started for Sysid testing
   DataLogManager.start(); 
   DriverStation.startDataLog(DataLogManager.getLog());
-
   configureBindings();
  }
 

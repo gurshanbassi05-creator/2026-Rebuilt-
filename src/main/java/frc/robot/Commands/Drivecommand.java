@@ -40,7 +40,7 @@ public class Drivecommand extends Command {
     }
    
   //Calling the drive method and relating it to the variables
-    Drivesub.Drive(LeftY, RightX);
+    Drivesub.Drive(RightX, -LeftY);
   }
 
   // Called once the command ends or is interrupted.
