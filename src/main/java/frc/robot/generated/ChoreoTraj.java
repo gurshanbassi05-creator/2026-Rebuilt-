@@ -34,9 +34,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj Drvie360 = new ChoreoTraj(
 	    "Drvie360",
 	    OptionalInt.empty(),
-	    2.83976,
-	    new Pose2d(0.488, 1.334, Rotation2d.fromRadians(-0.04)),
-	    new Pose2d(14.689, 0.915, Rotation2d.fromRadians(0))
+	    0.74586,
+	    new Pose2d(2.053, 5.223, Rotation2d.fromRadians(-1.529)),
+	    new Pose2d(2.229, 1.559, Rotation2d.fromRadians(-1.72))
 	);
 	public static final ChoreoTraj HubtoBalls = new ChoreoTraj(
 	    "HubtoBalls",

@@ -3,16 +3,18 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Subsytems;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import choreo.trajectory.DifferentialSample;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.VecBuilder;
 
 import edu.wpi.first.math.controller.LTVUnicycleController;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -32,10 +34,7 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 // Remove: import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog; (This is old)
 public class Driveterrain extends SubsystemBase {
-   private final LTVUnicycleController controller = new LTVUnicycleController(
-    VecBuilder.fill(0.06, 0.06, 0.1), // Q: Allow 6cm error in X/Y, 0.1 rad in Heading
-    VecBuilder.fill(1.0, 2.0),     // R: Max control effort (usually 12V)
-    0.02);
+   private final LTVUnicycleController controller = new LTVUnicycleController(0.2);     // R: Max control effort (usually 12V);
   private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(0);
   private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(1);
   
@@ -45,13 +44,19 @@ final SparkMax Frontleft, Frontright, Backleft, Backright;
 public final double Wheel_Radius_inmeter = Units.inchesToMeters(3);
 public final double wheel_Diameter = Units.inchesToMeters(6);
 public final double Trackwidth_inmeter = Units.inchesToMeters(22.5);
+final SparkClosedLoopController leftPID;
+final SparkClosedLoopController rightPID;
 private final double Circumference = Math.PI*wheel_Diameter;
+private final double kGearRatio = 8.45; 
+private final double kWheelDiameterMeters = 0.1524;
+private final double kMPS_to_RPM = (kGearRatio * 60) / (Math.PI * kWheelDiameterMeters);
+final SparkMaxConfig rightconfig = new SparkMaxConfig();
+final SparkMaxConfig leftConfig = new SparkMaxConfig();
 private final double Drive_To_gearratio = 1;
 public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 private final SysIdRoutine Routine = new SysIdRoutine(new SysIdRoutine.Config(),
  new SysIdRoutine.Mechanism(this::Drievvoltage, this::Logmotors, this));
 private final Field2d m_field = new Field2d();
-private final SimpleMotorFeedforward Feed = new SimpleMotorFeedforward(1, 1, 1);
 public final DifferentialDriveKinematics KINE = new DifferentialDriveKinematics(Trackwidth_inmeter);
 public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry(
   Heading(),
@@ -70,7 +75,29 @@ public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry
     Backleft = new SparkMax(3, MotorType.kBrushed);
     Backright = new SparkMax(4, MotorType.kBrushed);
   Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
-  
+  leftPID = Frontleft.getClosedLoopController();
+  rightPID = Frontright.getClosedLoopController();
+  rightconfig.closedLoop
+        .p(0.0001)   // Proportional gain (Correction)
+    .i(0.0)
+    .d(0.0)
+    // Access the nested feedForward config
+    .feedForward
+        .kV(0.00017) // kV is the new "Velocity Feedforward"
+        .kS(0.0);    // kS is Static Feedforward (to overcome friction)
+        leftConfig.closedLoop
+        .p(0.0001)   // Proportional gain (Correction)
+    .i(0.0)
+    .d(0.0)
+    // Access the nested feedForward config
+    .feedForward
+        .kV(0.00017) // kV is the new "Velocity Feedforward"
+        .kS(0.0);    // kS is Static Feedforward (to overcome friction)
+  leftConfig.follow(Frontleft);
+  rightconfig.follow(Frontright, true);
+  Backleft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+   Backright.configure(rightconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+   
   }
  public void Drievvoltage(Voltage V){
   Frontleft.setVoltage(-V.in(Volts));
@@ -98,10 +125,20 @@ ChassisSpeeds Speeds = controller.calculate(pose, Sample.getPose(),
 Targetspeeds.vxMetersPerSecond, 
 Targetspeeds.omegaRadiansPerSecond);
 DifferentialDriveWheelSpeeds wheelSpeeds = KINE.toWheelSpeeds(Speeds);
-Drive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+driveVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+
   }
+  public void driveVelocity(double leftMPS, double rightMPS) {
+        // Direct conversion math
+        double leftTargetRPM = leftMPS * kMPS_to_RPM;
+        double rightTargetRPM = rightMPS * kMPS_to_RPM;
+
+        // Command the motors to hit that RPM using internal PID
+        leftPID.setSetpoint(leftTargetRPM, ControlType.kVelocity);
+        rightPID.setSetpoint(rightTargetRPM, ControlType.kVelocity);
+    }
   public Rotation2d getGyroheading(){
-    return new Rotation2d(gyro.getAngle());
+    return new Rotation2d(gyro.getAngle()*Math.PI/180);
   }
 public void Resetpos(Pose2d Pose){
   Estimator.resetPose(Pose);
@@ -117,7 +154,7 @@ public void Resetpos(Pose2d Pose){
   return Leftencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
 }
   public double Rightpose(){
-  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter*-1;
+  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Wheel_Radius_inmeter;
 }
  //A method that gets the hedding/angle that the rbot is at
   public Rotation2d Heading(){
@@ -134,8 +171,8 @@ public void Resetpos(Pose2d Pose){
   }
   //Grouping Rightmotors
   public void Rightmotors(double speed){
-    Frontright.set(-speed);
-    Backright.set(-speed);
+    Frontright.set(speed);
+    Backright.set(speed);
   }
   //Creating a Method to set the Drivebase with 2 doubles
   public void Drive(double speed, double turn){
