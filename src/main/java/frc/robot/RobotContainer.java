@@ -17,19 +17,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Intakecommand;
-import frc.robot.Commands.Linearcommand;
 import frc.robot.Commands.Autos.Intakedeployauto;
 import frc.robot.Commands.Autos.Intakeretract;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
+import frc.robot.Subsytems.Hanging;
 import frc.robot.Subsytems.Intake;
-import frc.robot.Subsytems.Linearaccuator;
 public class RobotContainer {
   //Addind the subsystems and controller to the container
   final Driveterrain Drivesub = new Driveterrain();
   private final CommandXboxController Controller = new CommandXboxController(0); 
-  final Linearaccuator Linearsub = new Linearaccuator();
+  final Hanging Hangsub = new Hanging();
   final Intake Intakesub = new Intake();
   final Flywheel Flywheelsub = new Flywheel();
   //General timers;
@@ -47,7 +46,6 @@ public class RobotContainer {
     //Setting the subsytems to the commands (linking them)
   Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
   Intakesub.setDefaultCommand(new Intakecommand(Intakesub, Controller));
-  Linearsub.setDefaultCommand(new Linearcommand(Linearsub, Controller));
   Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
   //Allowing smartdashboard to contain choices mainly for Auto routines 
   //Giving the chooser options and getting those actions from the autocommands
@@ -71,7 +69,22 @@ Controller.a().toggleOnTrue(new StartEndCommand(
  ()->Intakesub.Intakespeed(-0.75),
  ()-> Intakesub.Stop(),
  Intakesub));
- 
+  Controller.leftBumper().whileTrue(new StartEndCommand(
+    ()->Hangsub.Telscopicspeed(1),
+   ()->Hangsub.Stoptele(), 
+   Hangsub));
+   Controller.rightBumper().whileTrue(new StartEndCommand(
+    ()-> Hangsub.Telscopicspeed(-1), 
+    ()->Hangsub.Stoptele(), 
+   Hangsub ));
+   Controller.povUp().whileTrue(new StartEndCommand(
+    ()->Hangsub.Acuatorspeed(1),
+    ()->Hangsub.Stopacutor(), 
+    Hangsub));
+    Controller.povDown().whileTrue(new StartEndCommand(
+    ()->Hangsub.Acuatorspeed(-1),
+    ()->Hangsub.Stopacutor(), 
+    Hangsub));
  Controller.b().onTrue(new Intakedeployauto(Intakesub));
  Controller.x().onTrue(new Intakeretract(Intakesub));
 //Another togglebale button that allows for the reverse direction
@@ -92,15 +105,7 @@ Controller.rightBumper().and(Controller.y())
 //Example of a command that stops when given a certain trigger
 
   //Non toggleable button
-Controller.rightBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(1),
-()->Linearsub.stop(),
-Linearsub));
 
-Controller.leftBumper().whileTrue(new StartEndCommand(
-()->Linearsub.IN_OUT(0.45),
-()->Linearsub.stop(),
-Linearsub));
 
 
 //Examples for a delay added in a command
