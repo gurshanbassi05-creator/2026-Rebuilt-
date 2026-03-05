@@ -5,6 +5,7 @@
 package frc.robot.Commands;
 
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Driveterrain;
@@ -40,7 +41,10 @@ public class Drivecommand extends Command {
     }
    
   //Calling the drive method and relating it to the variables
-    Drivesub.Drive(RightX, -LeftY);
+
+  if(!DriverStation.isAutonomous()){
+    Drivesub.Drive(LeftY, -0.75*RightX);
+  }
   }
 
   // Called once the command ends or is interrupted.

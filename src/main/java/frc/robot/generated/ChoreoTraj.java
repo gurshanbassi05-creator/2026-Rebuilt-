@@ -34,16 +34,16 @@ public record ChoreoTraj(
 	public static final ChoreoTraj Drvie360 = new ChoreoTraj(
 	    "Drvie360",
 	    OptionalInt.empty(),
-	    0.73861,
-	    new Pose2d(2.053, 5.223, Rotation2d.fromRadians(-1.618)),
-	    new Pose2d(2.229, 1.559, Rotation2d.fromRadians(-1.523))
+	    0.86818,
+	    new Pose2d(2.053, 5.223, Rotation2d.fromRadians(-1.593)),
+	    new Pose2d(1.936, 2.846, Rotation2d.fromRadians(-1.571))
 	);
 	public static final ChoreoTraj HubtoBalls = new ChoreoTraj(
 	    "HubtoBalls",
 	    OptionalInt.empty(),
-	    1.52697,
-	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01)),
-	    new Pose2d(0.729, 5.953, Rotation2d.fromRadians(3.142))
+	    2.34346,
+	    new Pose2d(3.342, 4.092, Rotation2d.fromRadians(0.024)),
+	    new Pose2d(0.729, 5.953, Rotation2d.fromRadians(-3.142))
 	);
 	public static final ChoreoTraj HubtoHang = new ChoreoTraj(
 	    "HubtoHang",
@@ -55,23 +55,23 @@ public record ChoreoTraj(
 	public static final ChoreoTraj HubtoHumans = new ChoreoTraj(
 	    "HubtoHumans",
 	    OptionalInt.empty(),
-	    1.94074,
-	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01)),
+	    2.05196,
+	    new Pose2d(3.342, 4.092, Rotation2d.fromRadians(0.012)),
 	    new Pose2d(0.718, 0.656, Rotation2d.fromRadians(-3.141))
 	);
 	public static final ChoreoTraj Lefttohub = new ChoreoTraj(
 	    "Lefttohub",
 	    OptionalInt.empty(),
-	    1.7068,
+	    1.86124,
 	    new Pose2d(3.574, 6.052, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
+	    new Pose2d(3.342, 4.092, Rotation2d.fromRadians(0.024))
 	);
 	public static final ChoreoTraj Righttohub = new ChoreoTraj(
 	    "Righttohub",
 	    OptionalInt.empty(),
-	    1.61771,
+	    1.63744,
 	    new Pose2d(3.576, 2.004, Rotation2d.fromRadians(0)),
-	    new Pose2d(3.531, 4.032, Rotation2d.fromRadians(-0.01))
+	    new Pose2d(3.342, 4.092, Rotation2d.fromRadians(0.026))
 	);
 
     /**

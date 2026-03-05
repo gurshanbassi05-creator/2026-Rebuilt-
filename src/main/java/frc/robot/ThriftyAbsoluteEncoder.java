@@ -33,7 +33,6 @@ public final class ThriftyAbsoluteEncoder {
   /** Returns absolute position in rotations [0, 1). */
   public double getAbsoluteRotations() {
     return wrapToUnit(encoder.get() - absoluteOffset);
-    
   }
 
   public double getAbsoluteDegrees() {

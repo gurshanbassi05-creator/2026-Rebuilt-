@@ -42,9 +42,8 @@ private final AutoFactory autoFactory = new AutoFactory(
 );
   //Sendable chooser can let autos be chosen from the smart dashboard
   SendableChooser<Command> chooser = new SendableChooser<>();
-  boolean Intakesdeploys;
-  final Camera Camsub = new Camera();
-  private final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Drivesub, Flywheelsub, Hangsub, Intakesub);
+   final Camera Camsub = new Camera();
+   final ChoreoAutos choreoAutos = new ChoreoAutos(autoFactory, Drivesub, Flywheelsub, Hangsub, Intakesub);
   public RobotContainer() {
     
     //Setting the subsytems to the commands (linking them)
@@ -58,21 +57,25 @@ private final AutoFactory autoFactory = new AutoFactory(
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Linking the autos to chosers
   chooser.addOption("Choreodrivefrwd", choreoAutos.path1Auto());
-      chooser.addOption("TimedShoot", choreoAutos.Timedshoot());
-      chooser.addOption("TimedFRWD", new Timeddrive(Drivesub, 5,0.5));
-chooser.addOption("Choreoshoothang", choreoAutos.ShootHang());
+  chooser.addOption("TimedShoot", choreoAutos.Timedshoot()); 
+  chooser.addOption("TimedFRWD", new Timeddrive(Drivesub, 5,0.5));chooser.addOption("Choreoshoothang", choreoAutos.ShootHang());
   //Datalog started for Sysid testing
-  DataLogManager.start(); 
-  DriverStation.startDataLog(DataLogManager.getLog());
+ // DataLogManager.start(); 
+ // DriverStation.startDataLog(DataLogManager.getLog());
   configureBindings();
  }
 
 private void configureBindings() {
-//Configure bindings allows subsystems to act without the use of formal commands. This is an example of a toggleable button 
+//Configure bindings allows subsystems to act without the use of formal commands. This is an example of a toggleable button
+// will spin the intake arm down while spinning the wheels
 Controller.a().toggleOnTrue(new StartEndCommand(
- ()->Intakesub.Intakespeed(-0.75),
+ ()->{Intakesub.Intakespeed(-1);
+Intakesub.Limitedintakespeed(0.15);},
  ()-> Intakesub.Stop(),
  Intakesub));
+ //Will spin the intake arm slowly
+  Controller.b().onTrue(new Intakedeployauto(Intakesub));
+   //Telscopic tubing code to right and left bumper
   Controller.leftBumper().whileTrue(new StartEndCommand(
     ()->Hangsub.Telscopicspeed(1),
    ()->Hangsub.Stoptele(), 
@@ -81,6 +84,7 @@ Controller.a().toggleOnTrue(new StartEndCommand(
     ()-> Hangsub.Telscopicspeed(-1), 
     ()->Hangsub.Stoptele(), 
    Hangsub ));
+   //Using D-Pad to controll elavator
    Controller.povUp().whileTrue(new StartEndCommand(
     ()->Hangsub.Acuatorspeed(1),
     ()->Hangsub.Stopacutor(), 
@@ -89,30 +93,24 @@ Controller.a().toggleOnTrue(new StartEndCommand(
     ()->Hangsub.Acuatorspeed(-1),
     ()->Hangsub.Stopacutor(), 
     Hangsub));
- Controller.b().onTrue(new Intakedeployauto(Intakesub));
+    //Binding x to intake arm going up
  Controller.x().onTrue(new Intakeretract(Intakesub));
 //Another togglebale button that allows for the reverse direction
 
   //Temporary bindings for Sysid testing
-Controller.a()
-    .whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+//Controller.a()
+    //r.whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
-Controller.rightBumper().and(Controller.b())
-    .whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+//Controller.rightBumper().and(Controller.b())
+   // .whileTrue(Drivesub.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
-Controller.rightBumper().and(Controller.x())
-    .whileTrue(Drivesub.sysIdDynamic(SysIdRoutine.Direction.kForward));
+//Controller.rightBumper().and(Controller.x())
+    //.whileTrue(Drivesub.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
-Controller.rightBumper().and(Controller.y())
-    .whileTrue(Drivesub.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-//Example of a command that stops when given a certain trigger
-
-  //Non toggleable button
+//Controller.rightBumper().and(Controller.y())
+    //.whileTrue(Drivesub.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
 
-
-//Examples for a delay added in a command
 
 }
 

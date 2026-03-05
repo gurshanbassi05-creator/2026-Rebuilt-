@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,20 +31,20 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 // Remove: import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog; (This is old)
 public class Driveterrain extends SubsystemBase {
-   private final LTVUnicycleController controller = new LTVUnicycleController(0.2);     // R: Max control effort (usually 12V);
-  private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(0);
-  private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(1);
+  private final LTVUnicycleController controller = new LTVUnicycleController(0.2);  
+
+  private final AnalogEncoder ecoderleft; 
+    private final AnalogEncoder encoderright; 
+  private ThriftyAbsoluteEncoder Leftencoder = new ThriftyAbsoluteEncoder(2);
+  private ThriftyAbsoluteEncoder Rightencoder = new ThriftyAbsoluteEncoder(3);
   private final double kMaxSpeed = 3.0;
     //Defining Motors
 final SparkMax Frontleft, Frontright, Backleft, Backright;
   //double to convert the encoders position from rotations to feet public final double Drive_To_gearratio = 1;
 public final double Wheel_Radius_inmeter = Units.inchesToMeters(3);
-public final double Diameter = Units.inchesToMeters(6);
-
 public final double wheel_Diameter = Units.inchesToMeters(6);
 public final double Trackwidth_inmeter = Units.inchesToMeters(22.5);
 private final double Circumference = Math.PI*wheel_Diameter;
-
 private final double Drive_To_gearratio = 1;
 public final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 private final SysIdRoutine Routine = new SysIdRoutine(new SysIdRoutine.Config(),
@@ -54,20 +56,25 @@ public final DifferentialDriveOdometry Estimator = new DifferentialDriveOdometry
   Leftpose(),
   Rightpose());
   //Defining encoders
-  
-  
   //Defining the Drivebase
   DifferentialDrive Drivebase;
   
   public Driveterrain() {
 //Initalising Motors (Giving the CAN ID)
-    Frontleft = new SparkMax(1, MotorType.kBrushed);
-    Frontright = new SparkMax(2, MotorType.kBrushed);
-    Backleft = new SparkMax(3, MotorType.kBrushed);
-    Backright = new SparkMax(4, MotorType.kBrushed);
+  Frontleft = new SparkMax(1, MotorType.kBrushed);
+  Frontright = new SparkMax(2, MotorType.kBrushed);
+  Backleft = new SparkMax(3, MotorType.kBrushed);
+  Backright = new SparkMax(4, MotorType.kBrushed);
   Drivebase = new DifferentialDrive(this::Leftmotors, this::Rightmotors);
-
-  
+  encoderright = new AnalogEncoder(1);
+  ecoderleft = new AnalogEncoder(0);
+//ress
+}
+public double analogleft(){
+  return ecoderleft.get();
+}
+public double analogright(){
+return encoderright.get();
 }
  public void Drievvoltage(Voltage V){
   Frontleft.setVoltage(-V.in(Volts));
@@ -130,10 +137,10 @@ public void Resetpos(Pose2d Pose){
   }
 
   public double Leftpose(){
-  return Leftencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Diameter;
+  return Leftencoder.getRelativeRotations()*Drive_To_gearratio*wheel_Diameter;
 }
   public double Rightpose(){
-  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*Math.PI*Diameter;
+  return Rightencoder.getRelativeRotations()*Drive_To_gearratio*wheel_Diameter;
 }
  //A method that gets the hedding/angle that the rbot is at
   public Rotation2d Heading(){
@@ -177,15 +184,15 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
   @Override
   public void periodic() {
   Estimator.update(getGyroheading(), Leftpose(), Rightpose());
+  SmartDashboard.putNumber("Analogleft", analogleft());
+  SmartDashboard.putNumber("analogright", analogright());
   SmartDashboard.putNumber("leftencoder", Leftpose());
-   SmartDashboard.putNumber("Rightencoder", Rightpose());
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Odom (X)", Estimator.getPoseMeters().getX());
-    SmartDashboard.putNumber("Odom (Y)", Estimator.getPoseMeters().getY());
-    SmartDashboard.putData("Field", m_field);
+  SmartDashboard.putNumber("Rightencoder", Rightpose());
+  SmartDashboard.putNumber("Odom (X)", Estimator.getPoseMeters().getX());
+  SmartDashboard.putNumber("Odom (Y)", Estimator.getPoseMeters().getY());
+  SmartDashboard.putData("Field", m_field);
   m_field.setRobotPose(Estimator.getPoseMeters());
-
-    SmartDashboard.putNumber("Gyroheading", Heading().getDegrees());
+  SmartDashboard.putNumber("Gyroheading", Heading().getDegrees());
    
   }
 }

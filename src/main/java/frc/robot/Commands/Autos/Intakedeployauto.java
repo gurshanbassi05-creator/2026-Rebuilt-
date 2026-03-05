@@ -28,7 +28,7 @@ public class Intakedeployauto extends Command {
   public void execute() {
     SmartDashboard.putBoolean("Bottomhit", Intakesub.Bottomhit());
 
-    Intakesub.Limitedintakespeed(0.35);
+    Intakesub.Limitedintakespeed(0.45);
     if (Intakesub.Bottomhit() == false) {
       Intakesub.Limitedintakespeed(0);
     }
@@ -43,6 +43,6 @@ public class Intakedeployauto extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Intakesub.Bottomhit() == false;
+    return false;
   }
 }

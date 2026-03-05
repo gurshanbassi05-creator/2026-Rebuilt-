@@ -31,7 +31,7 @@ public class Flywheelcommand extends Command {
   public void execute() {
     RightTrigger = controller.getRightTriggerAxis();
     Lefttrigger = controller.getLeftTriggerAxis();
-    flywheelsub.FlywheelSpeed(-0.9*RightTrigger);
+    flywheelsub.FlywheelSpeed(-0.7*RightTrigger);
     flywheelsub.Kickspeed(-Lefttrigger);
   }
 
