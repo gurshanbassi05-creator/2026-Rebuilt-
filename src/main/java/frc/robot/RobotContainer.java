@@ -46,7 +46,6 @@ private final AutoFactory autoFactory = new AutoFactory(
     
     //Setting the subsytems to the commands (linking them)
   Drivesub.setDefaultCommand(new Drivecommand(Drivesub, Controller));
-  Flywheelsub.setDefaultCommand(new Flywheelcommand(Flywheelsub, Controller));
   //Allowing smartdashboard to contain choices mainly for Auto routines 
   //Giving the chooser options and getting those actions from the autocommands
   SmartDashboard.putData(chooser);
@@ -93,11 +92,17 @@ Intakesub.Limitedintakespeed(0.15);},
     ()->Hangsub.Stopacutor(), 
     Hangsub));
     //Binding x to intake arm going up
- Controller.x().onTrue(new Intakeretract(Intakesub));
+ Controller.x().whileTrue(new StartEndCommand(
+()-> Intakesub.Limitedintakespeed(-1),
+()-> Intakesub.Limitedintakestop(),
+Intakesub
+
+ ));
  Controller.y().onTrue(new InstantCommand(
   ()-> Intakesub.Limitedintakespeed(0)
  ));
- Controller.rightTrigger().onTrue(new Flywheelcommand(Flywheelsub, Controller).Kickspulse());
+ Controller.rightTrigger().onTrue(new Flywheelcommand(Flywheelsub, Controller));
+ 
 //Another togglebale button that allows for the reverse direction
 
   //Temporary bindings for Sysid testing

@@ -28,8 +28,8 @@ public class Intake extends SubsystemBase{
     //Intakedeploy = new SparkMax(6, MotorType.kBrushless);
     Intakedeploy = new SparkMax(6, MotorType.kBrushed);
     //Using the dio ports on the RIO to initalize the digital input
-    Toplimitswitch = new DigitalInput(0);
-    BottomLimitswitch = new DigitalInput(1);          
+    Toplimitswitch = new DigitalInput(1);
+    BottomLimitswitch = new DigitalInput(0);          
 
 
     //Creates an encoder and sets it to the neo encoder

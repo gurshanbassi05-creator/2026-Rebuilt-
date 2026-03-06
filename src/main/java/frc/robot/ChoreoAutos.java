@@ -12,6 +12,7 @@ import frc.robot.Commands.Autos.Flywheelshoot;
 import frc.robot.Commands.Autos.Intakedeployauto;
 import frc.robot.Commands.Autos.Intakerollers;
 import frc.robot.Commands.Autos.L1Hang;
+import frc.robot.Commands.Autos.Timeddrive;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Hanging;
@@ -81,12 +82,14 @@ public Command Leftshoothang(){
   }
     public Command Timedshoot(){
         return Commands.sequence(
-            new Intakedeployauto(Intakesub),
-            new Flywheelshoot(Flywheelsub, 2)
+new Timeddrive(Drivesub, 1, -1),
+new Intakedeployauto(Intakesub),
+new Flywheelshoot(Flywheelsub, 2)
         );
     }
    public Command L1hang(){
-    return new L1Hang(Hangsub, 10);
+    return  Commands.sequence( new Timeddrive(Drivesub, 1.5, -1),
+    new L1Hang(Hangsub, 10));
    }
     }
 

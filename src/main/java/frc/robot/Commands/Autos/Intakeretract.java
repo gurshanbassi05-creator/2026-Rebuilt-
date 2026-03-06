@@ -25,9 +25,7 @@ public class Intakeretract extends Command {
   @Override
   public void execute() {
     Intakesub.Limitedintakespeed(-1);
-    if (Intakesub.Tophit() == false) {
-      Intakesub.Limitedintakespeed(0);
-    }
+   
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +35,6 @@ public class Intakeretract extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Intakesub.Tophit() == false;
+    return false;
   }
 }
