@@ -39,8 +39,10 @@ public class Flywheelcommand extends Command {
 public Command Kickspulse(){
 return Commands.sequence( 
 flywheelsub.run(()-> flywheelsub.Kickspeed(-1))
-.withTimeout(0.5).
-finallyDo(()->flywheelsub.Kickspeed(0)), Commands.waitSeconds(1)).repeatedly();
+.withTimeout(0.5),
+flywheelsub.runOnce(()-> flywheelsub.Kickspeed(0)),
+(Commands.waitSeconds(0.5))
+).repeatedly().finallyDo((interrupted) -> flywheelsub.Kickspeed(0));
 
 }
 
