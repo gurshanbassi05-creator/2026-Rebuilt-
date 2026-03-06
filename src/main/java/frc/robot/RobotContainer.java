@@ -5,20 +5,18 @@
 package frc.robot;
 
 
+
 import choreo.auto.AutoFactory;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
 import frc.robot.Commands.Autos.Intakedeployauto;
 import frc.robot.Commands.Autos.Intakeretract;
-import frc.robot.Commands.Autos.Timeddrive;
 import frc.robot.Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
@@ -57,8 +55,9 @@ private final AutoFactory autoFactory = new AutoFactory(
   SmartDashboard.putBoolean("Topswitchhits", Intakesub.Bottomhit());
   //Linking the autos to chosers
   chooser.addOption("Choreodrivefrwd", choreoAutos.path1Auto());
+  chooser.addOption("L1Hang", choreoAutos.L1hang());
   chooser.addOption("TimedShoot", choreoAutos.Timedshoot()); 
-  chooser.addOption("TimedFRWD", new Timeddrive(Drivesub, 5,0.5));chooser.addOption("Choreoshoothang", choreoAutos.ShootHang());
+  chooser.addOption("Choreoshoothang", choreoAutos.ShootHang());
   //Datalog started for Sysid testing
  // DataLogManager.start(); 
  // DriverStation.startDataLog(DataLogManager.getLog());
@@ -95,6 +94,10 @@ Intakesub.Limitedintakespeed(0.15);},
     Hangsub));
     //Binding x to intake arm going up
  Controller.x().onTrue(new Intakeretract(Intakesub));
+ Controller.y().onTrue(new InstantCommand(
+  ()-> Intakesub.Limitedintakespeed(0)
+ ));
+ Controller.rightTrigger().onTrue(new Flywheelcommand(Flywheelsub, Controller).Kickspulse());
 //Another togglebale button that allows for the reverse direction
 
   //Temporary bindings for Sysid testing
@@ -113,7 +116,6 @@ Intakesub.Limitedintakespeed(0.15);},
 
 
 }
-
 
 
 public Command getAutonomousCommand() {

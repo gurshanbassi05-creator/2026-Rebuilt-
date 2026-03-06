@@ -23,6 +23,7 @@ public class Flywheel extends SubsystemBase {
   public void Kickspeed(double speed){
       Kick.set(TalonSRXControlMode.PercentOutput, speed);  
   }
+ 
 
   public void Stop(){
   Flywheel.set(TalonSRXControlMode.PercentOutput, 0);

@@ -5,6 +5,7 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsytems.Flywheel;
 
@@ -31,9 +32,17 @@ public class Flywheelcommand extends Command {
   public void execute() {
     RightTrigger = controller.getRightTriggerAxis();
     Lefttrigger = controller.getLeftTriggerAxis();
-    flywheelsub.FlywheelSpeed(-0.7*RightTrigger);
-    flywheelsub.Kickspeed(-Lefttrigger);
+    flywheelsub.FlywheelSpeed(-0.8*RightTrigger);
+    //flywheelsub.Kickspeed(-Lefttrigger);
   }
+
+public Command Kickspulse(){
+return Commands.sequence( 
+flywheelsub.run(()-> flywheelsub.Kickspeed(-1))
+.withTimeout(0.5).
+finallyDo(()->flywheelsub.Kickspeed(0)), Commands.waitSeconds(1)).repeatedly();
+
+}
 
   // Called once the command ends or is interrupted.
   @Override

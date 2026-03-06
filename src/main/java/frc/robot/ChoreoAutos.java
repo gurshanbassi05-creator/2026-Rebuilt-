@@ -12,7 +12,6 @@ import frc.robot.Commands.Autos.Flywheelshoot;
 import frc.robot.Commands.Autos.Intakedeployauto;
 import frc.robot.Commands.Autos.Intakerollers;
 import frc.robot.Commands.Autos.L1Hang;
-import frc.robot.Commands.Autos.Timeddrive;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Hanging;
@@ -50,7 +49,7 @@ return Commands.sequence(
     traj.resetOdometry(),
     new Flywheelshoot(Flywheelsub, 3),
     traj.cmd(),
-    new L1Hang(Hangsub)
+    new L1Hang(Hangsub, 5)
 );}
 public Command Leftshoothang(){
     var routine = autofactory.newRoutine("Lefthub");
@@ -62,7 +61,7 @@ public Command Leftshoothang(){
     new Flywheelshoot(Flywheelsub, 3),
     Hang.resetOdometry(),
     Hang.cmd(),
-    new L1Hang(Hangsub)
+    new L1Hang(Hangsub, 10)
     );
     fullcommand.addRequirements(Drivesub);
     return fullcommand;
@@ -82,10 +81,12 @@ public Command Leftshoothang(){
   }
     public Command Timedshoot(){
         return Commands.sequence(
-            new Flywheelshoot(Flywheelsub, 5),
-            new Timeddrive(Drivesub, 3, -0.5)
+            new Intakedeployauto(Intakesub),
+            new Flywheelshoot(Flywheelsub, 2)
         );
     }
-   
+   public Command L1hang(){
+    return new L1Hang(Hangsub, 10);
+   }
     }
 

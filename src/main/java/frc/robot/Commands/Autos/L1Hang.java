@@ -12,9 +12,11 @@ import frc.robot.Subsytems.Hanging;
 public class L1Hang extends Command {
   Hanging Hangsub;
   Timer Time;
+  double seconds;
   /** Creates a new L1Hang. */
-  public L1Hang(Hanging Hangsub) {
+  public L1Hang(Hanging Hangsub, double seconds) {
 this.Hangsub = Hangsub;
+this.seconds = seconds;
 
 addRequirements(Hangsub);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -30,11 +32,8 @@ addRequirements(Hangsub);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Time.get()< 5) {
+    if (Time.get()< seconds) {
       Hangsub.Telscopicspeed(1);
-    }
-    if (Time.get()> 5) {
-      Hangsub.Telscopicspeed(-1);
     }
   }
 
@@ -45,6 +44,6 @@ addRequirements(Hangsub);
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Time.get() > 8;
+    return Time.get() > seconds;
   }
 }
