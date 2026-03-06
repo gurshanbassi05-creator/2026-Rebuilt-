@@ -13,11 +13,10 @@ public class Timeddrive extends Command {
   Driveterrain Drivesub;
   private final Timer Time = new Timer();
   private final double seconds;
-  private final double speed;
+
   /** Creates a new Timeddrive. */
-  public Timeddrive(Driveterrain Drivesub, double seconds, double speed) {
+  public Timeddrive(Driveterrain Drivesub, double seconds) {
     this.Drivesub = Drivesub;
-    this.speed = speed;
     this.seconds = seconds;
     addRequirements(Drivesub);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -34,7 +33,7 @@ public class Timeddrive extends Command {
   @Override
   public void execute() {
     if (Time.get() < seconds) {
-      Drivesub.Drive(speed, 0);
+      Drivesub.Drive(0.60, 0);
     }
     if (Time.get()>seconds) {
       Drivesub.Stop();

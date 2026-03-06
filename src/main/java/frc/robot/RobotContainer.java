@@ -15,9 +15,182 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.Drivecommand;
 import frc.robot.Commands.Flywheelcommand;
-import frc.robot.Commands.Autos.Intakedeployauto;
-import frc.robot.Commands.Autos.Intakeretract;
-import frc.robot.Subsytems.Camera;
+import frc.robot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Subsytems.Camera;
 import frc.robot.Subsytems.Driveterrain;
 import frc.robot.Subsytems.Flywheel;
 import frc.robot.Subsytems.Hanging;
@@ -72,7 +245,11 @@ Intakesub.Limitedintakespeed(0.15);},
  ()-> Intakesub.Stop(),
  Intakesub));
  //Will spin the intake arm slowly
-  Controller.b().onTrue(new Intakedeployauto(Intakesub));
+  Controller.b().whileTrue(new StartEndCommand(
+    ()->Intakesub.Limitedintakespeed(0.55),
+     ()->   Intakesub.Limitedintakestop(),
+        Intakesub
+  ));
    //Telscopic tubing code to right and left bumper
   Controller.leftBumper().whileTrue(new StartEndCommand(
     ()->Hangsub.Telscopicspeed(1),

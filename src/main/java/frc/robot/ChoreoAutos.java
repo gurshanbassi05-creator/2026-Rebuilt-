@@ -82,13 +82,12 @@ public Command Leftshoothang(){
   }
     public Command Timedshoot(){
         return Commands.sequence(
-new Timeddrive(Drivesub, 1, -1),
-new Intakedeployauto(Intakesub),
-new Flywheelshoot(Flywheelsub, 2)
+new Timeddrive(Drivesub, 0.75),
+new Flywheelshoot(Flywheelsub, 5)
         );
     }
    public Command L1hang(){
-    return  Commands.sequence( new Timeddrive(Drivesub, 1.5, -1),
+    return  Commands.sequence( new Timeddrive(Drivesub, 1.5),
     new L1Hang(Hangsub, 10));
    }
     }
