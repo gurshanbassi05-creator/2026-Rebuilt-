@@ -43,7 +43,7 @@ public class Drivecommand extends Command {
   //Calling the drive method and relating it to the variables
 
   if(!DriverStation.isAutonomous()){
-    Drivesub.Drive(0.75*LeftY, 0.75*RightX);
+    Drivesub.Drive(LeftY, 0.75*RightX);
   }
   }
 
